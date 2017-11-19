@@ -45,6 +45,9 @@ vector3 MySolver::GetPosition(void) { return m_v3Position; }
 void MySolver::SetVelocity(vector3 a_v3Velocity) { m_v3Velocity = a_v3Velocity; }
 vector3 MySolver::GetVelocity(void) { return m_v3Velocity; }
 
+void MySolver::SetInUse(bool a_bInUse) { m_bInUse = a_bInUse; }
+bool MySolver::GetInUse(void) { return m_bInUse; }
+
 void MySolver::SetMass(float a_fMass) { m_fMass = a_fMass; }
 float MySolver::GetMass(void) { return m_fMass; }
 
@@ -96,15 +99,16 @@ void MySolver::Update(void)
 
 	ApplyFriction(0.1f);
 	m_v3Velocity = RoundSmallVelocity(m_v3Velocity, 0.028f);
-
+}
+void MySolver::Move(void) {
 	m_v3Position += m_v3Velocity;
-
+	/*
 	if (m_v3Position.y <= 0)
 	{
-		m_v3Position.y = 0;
-		m_v3Velocity.y = 0;
+	m_v3Position.y = 0;
+	m_v3Velocity.y = 0;
 	}
-
+	*/
 	m_v3Acceleration = ZERO_V3;
 }
 void MySolver::ResolveCollision(MySolver* a_pOther)

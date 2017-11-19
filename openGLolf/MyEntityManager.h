@@ -271,6 +271,7 @@ public:
 	OUTPUT: ---
 	*/
 	void SetPosition(vector3 a_v3Position, String a_sUniqueID);
+	vector3 GetPosition(String a_sUniqueID);
 	/*
 	USAGE: Sets the position of the specified entity
 	ARGUMENTS:

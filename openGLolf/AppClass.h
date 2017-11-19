@@ -309,6 +309,9 @@ private:
 	OUTPUT: ---
 	*/
 	void NewFrame(void);
+
+	std::string PrintVector3(vector3);
+
 #pragma endregion
 
 #pragma region The Rule of Three

@@ -51,7 +51,7 @@ void Simplex::MyEntityManager::ApplyForce(vector3 a_v3Force, String a_sUniqueID)
 	MyEntity* pTempEntity = MyEntity::GetEntity(a_sUniqueID);
 	if (pTempEntity)
 	{
-		pTempEntity->ApplyForce(a_v3Force);
+		pTempEntity->GetMySolver()->ApplyForce(a_v3Force);
 	}
 }
 void Simplex::MyEntityManager::ApplyForce(vector3 a_v3Force, uint a_uIndex)
@@ -59,7 +59,7 @@ void Simplex::MyEntityManager::ApplyForce(vector3 a_v3Force, uint a_uIndex)
 	if (m_uEntityCount == 0) { return; }
 
 	if (a_uIndex >= m_uEntityCount) { a_uIndex = m_uEntityCount - 1; }
-	return m_mEntityArray[a_uIndex]->ApplyForce(a_v3Force);
+	return m_mEntityArray[a_uIndex]->GetMySolver()->ApplyForce(a_v3Force);
 }
 void Simplex::MyEntityManager::SetPosition(vector3 a_v3Position, String a_sUniqueID)
 {
@@ -68,10 +68,11 @@ void Simplex::MyEntityManager::SetPosition(vector3 a_v3Position, String a_sUniqu
 	
 	if (pTemp)
 	{
-		pTemp->SetPosition(a_v3Position);
+		pTemp->GetMySolver()->SetPosition(a_v3Position);
 	}
 	return;
 }
+vector3 Simplex::MyEntityManager::GetPosition(String a_sUniqueID) { return MyEntity::GetEntity(a_sUniqueID)->GetMySolver()->GetPosition(); }
 Simplex::Model* Simplex::MyEntityManager::GetModel(uint a_uIndex)
 {
 	//if the list is empty return
@@ -194,7 +195,7 @@ void Simplex::MyEntityManager::SetPosition(vector3 a_v3Position, uint a_uIndex)
 	if (a_uIndex >= m_uEntityCount)
 		a_uIndex = m_uEntityCount - 1;
 
-	m_mEntityArray[a_uIndex]->SetPosition(a_v3Position);
+	m_mEntityArray[a_uIndex]->GetMySolver()->SetPosition(a_v3Position);
 
 	return;
 }
@@ -205,11 +206,11 @@ void Simplex::MyEntityManager::SetMass(float a_fMass, String a_sUniqueID)
 	//if the entity does not exists return
 	if (pTemp)
 	{
-		pTemp->SetMass(a_fMass);
+		pTemp->GetMySolver()->SetMass(a_fMass);
 	}
 	return;
 }
-void Simplex::MyEntityManager::SetMass(float a_v3Position, uint a_uIndex)
+void Simplex::MyEntityManager::SetMass(float a_fMass, uint a_uIndex)
 {
 	//if the list is empty return
 	if (m_uEntityCount == 0)
@@ -219,7 +220,7 @@ void Simplex::MyEntityManager::SetMass(float a_v3Position, uint a_uIndex)
 	if (a_uIndex >= m_uEntityCount)
 		a_uIndex = m_uEntityCount - 1;
 
-	m_mEntityArray[a_uIndex]->SetMass(a_fMass);
+	m_mEntityArray[a_uIndex]->GetMySolver()->SetMass(a_fMass);
 
 	return;
 }
@@ -230,7 +231,7 @@ void Simplex::MyEntityManager::UsePhysicsSolver(bool a_bUse, String a_sUniqueID)
 
 	//if the entity does not exists return
 	if (pTemp)
-		pTemp->UsePhysicsSolver(a_bUse);
+		pTemp->GetMySolver()->SetInUse(a_bUse);
 	return;
 }
 void Simplex::MyEntityManager::UsePhysicsSolver(bool a_bUse, uint a_uIndex)
@@ -243,7 +244,7 @@ void Simplex::MyEntityManager::UsePhysicsSolver(bool a_bUse, uint a_uIndex)
 	if (a_uIndex >= m_uEntityCount)
 		a_uIndex = m_uEntityCount - 1;
 
-	return m_mEntityArray[a_uIndex]->UsePhysicsSolver(a_bUse);
+	return m_mEntityArray[a_uIndex]->GetMySolver()->SetInUse(a_bUse);
 }
 //The big 3
 Simplex::MyEntityManager::MyEntityManager(){Init();}
@@ -257,15 +258,43 @@ void Simplex::MyEntityManager::Update(void)
 	for (uint i = 0; i < m_uEntityCount; i++)
 	{
 		m_mEntityArray[i]->ClearCollisionList();
+
+		MySolver* tempSolver = m_mEntityArray[i]->GetMySolver();
+		if (tempSolver->GetInUse()) {
+			tempSolver->Update();
+		}
 	}
 
 	//check collisions
 	for (uint i = 0; i < m_uEntityCount - 1; i++)
 	{
-		for (uint j = i + 1; j < m_uEntityCount; j++)
-		{
-			m_mEntityArray[i]->IsColliding(m_mEntityArray[j]);
+		MySolver* tempSolver = m_mEntityArray[i]->GetMySolver();
+		if (tempSolver->GetInUse()) {
+			for (uint j = i + 1; j < m_uEntityCount; j++)
+			{
+				if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j])) {
+					vector3 posA = m_mEntityArray[i]->GetMySolver()->GetPosition();
+					vector3 posB = m_mEntityArray[j]->GetMySolver()->GetPosition();
+					vector3 velA = m_mEntityArray[i]->GetMySolver()->GetVelocity();
+
+					if (posA.y > posB.y) {
+						std::cout << m_mEntityArray[i]->GetUniqueID() << " above " << m_mEntityArray[j]->GetUniqueID() << std::endl;
+
+						if (velA.y < 0.0f) {
+							m_mEntityArray[i]->GetMySolver()->SetVelocity(vector3(velA.x, -velA.y, velA.x));
+						}
+					}
+					else {
+						std::cout << m_mEntityArray[i]->GetUniqueID() << " below " << m_mEntityArray[j]->GetUniqueID() << std::endl;
+
+						if (velA.y > 0.0f) {
+							m_mEntityArray[i]->GetMySolver()->SetVelocity(vector3(velA.x, -velA.y, velA.x));
+						}
+					}
+				}
+			}
 		}
+		tempSolver->Move();
 	}
 }
 void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)

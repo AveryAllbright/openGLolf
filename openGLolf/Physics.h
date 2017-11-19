@@ -15,6 +15,7 @@ namespace Simplex
 		vector3 m_v3Acceleration = ZERO_V3; //Acceleration of the MySolver
 		vector3 m_v3Position = ZERO_V3; //Position of the MySolver
 		vector3 m_v3Velocity = ZERO_V3; //Velocity of the MySolver
+		bool m_bInUse = false; //Is the MySolver being used
 		float m_fMass = 1.0f; //Mass of the solver
 	public:
 		/*
@@ -61,6 +62,14 @@ namespace Simplex
 		*/
 		vector3 GetPosition(void);
 
+		void SetInUse(bool a_bInUse);
+		/*
+		USAGE: Gets whethr the solver is in use
+		ARGUMENTS: ---
+		OUTPUT: Is in use
+		*/
+		bool GetInUse(void);
+
 		/*
 		USAGE: Sets the velocity of the solver
 		ARGUMENTS: vector3 a_v3Velocity -> velocity to set
@@ -105,6 +114,12 @@ namespace Simplex
 		OUTPUT: ---
 		*/
 		void Update(void);
+		/*
+		USAGE: Moves the MySolver
+		ARGUMENTS: ---
+		OUTPUT: ---
+		*/
+		void Move(void);
 		/*
 		USAGE: Resolve the collision between two solvers
 		ARGUMENTS: MySolver* a_pOther -> other solver to resolve collision with

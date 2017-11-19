@@ -14,6 +14,7 @@ void Simplex::MyEntity::SetModelMatrix(matrix4 a_m4ToWorld)
 }
 Model* Simplex::MyEntity::GetModel(void){return m_pModel;}
 MyRigidBody* Simplex::MyEntity::GetRigidBody(void){	return m_pRigidBody; }
+MySolver* Simplex::MyEntity::GetMySolver(void) { return m_pMySolver; }
 bool Simplex::MyEntity::IsInitialized(void){ return m_bInMemory; }
 String Simplex::MyEntity::GetUniqueID(void) { return m_sUniqueID; }
 void Simplex::MyEntity::SetAxisVisible(bool a_bSetAxis) { m_bSetAxis = a_bSetAxis; }
@@ -70,6 +71,7 @@ Simplex::MyEntity::MyEntity(String a_sFileName, String a_sUniqueID)
 		m_sUniqueID = a_sUniqueID;
 		m_IDMap[a_sUniqueID] = this;
 		m_pRigidBody = new MyRigidBody(m_pModel->GetVertexList()); //generate a rigid body
+		m_pMySolver = new MySolver();
 		m_bInMemory = true; //mark this entity as viable
 	}
 }
@@ -79,6 +81,7 @@ Simplex::MyEntity::MyEntity(MyEntity const& other)
 	m_pModel = other.m_pModel;
 	//generate a new rigid body we do not share the same rigid body as we do the model
 	m_pRigidBody = new MyRigidBody(m_pModel->GetVertexList()); 
+	m_pMySolver = new MySolver();
 	m_m4ToWorld = other.m_m4ToWorld;
 	m_pMeshMngr = other.m_pMeshMngr;
 	m_sUniqueID = other.m_sUniqueID;

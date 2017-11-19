@@ -10,10 +10,15 @@ void Application::InitVariables(void)
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
-	m_pEntityMngr->AddEntity("Minecraft\\Steve.obj", "Ball");
-	m_pEntityMngr->UsePhysicsSolver();
+	//Make Ball
+	m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
+	m_pEntityMngr->UsePhysicsSolver(true, "Ball");
+	m_pEntityMngr->SetPosition(vector3(0.0f, 5.0f, -10.0f), "Ball");
 
-	m_pEntityMngr->Update();
+	//Make Plane
+	m_pEntityMngr->AddEntity("openGLolf\\GolfPlane.obj", "Plane");
+	m_pEntityMngr->UsePhysicsSolver(false, "Plane");
+	m_pEntityMngr->SetPosition(vector3(0.0f, -5.0f, -10.0f), "Plane");
 }
 void Application::Update(void)
 {
@@ -25,9 +30,32 @@ void Application::Update(void)
 
 	//Is the first person camera active?
 	CameraRotation();
+
+	//Set model matrix of ball
+	matrix4 mBall = glm::translate(m_pEntityMngr->GetPosition("Ball"));
+	m_pEntityMngr->GetModel("Ball")->SetModelMatrix(mBall);
+	m_pEntityMngr->GetRigidBody("Ball")->SetModelMatrix(mBall);
+
+	//Set model matrix of plane
+	matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane"));
+	m_pEntityMngr->GetModel("Plane")->SetModelMatrix(mPlane);
+	m_pEntityMngr->GetRigidBody("Plane")->SetModelMatrix(mPlane);
 	
 	//Update Entity Manager
 	m_pEntityMngr->Update();
+
+	/*
+	std::cout << PrintVector3(m_pEntityMngr->GetPosition("Ball")) << std::endl;
+	std::cout << PrintVector3(m_pEntityMngr->GetPosition("Plane")) << std::endl;
+
+	
+	//check collision
+	MyRigidBody* mBallRB = m_pEntityMngr->GetRigidBody("Ball");
+	MyRigidBody* mPlaneRB = m_pEntityMngr->GetRigidBody("Plane");
+	if (m_pEntityMngr->GetRigidBody("Ball")->IsColliding(mPlaneRB)) {
+		//mBallRB->
+	}
+	*/
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
@@ -36,7 +64,7 @@ void Application::Display(void)
 {
 	// Clear the screen
 	ClearScreen();
-	
+
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
 	
@@ -56,4 +84,12 @@ void Application::Release(void)
 {
 	//release GUI
 	ShutdownGUI();
+}
+
+/*
+**	Helper Functions
+*/
+
+std::string Application::PrintVector3(vector3 v) {
+	return std::to_string(v.x) + " " + std::to_string(v.y) + " " + std::to_string(v.z);
 }

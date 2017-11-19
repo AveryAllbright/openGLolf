@@ -6,6 +6,7 @@ Date: 2017/07
 #define __MYENTITY_H_
 
 #include "MyRigidBody.h"
+#include "Physics.h"
 
 namespace Simplex
 {
@@ -22,6 +23,7 @@ class MyEntity
 
 	Model* m_pModel = nullptr; //Model associated with this MyEntity
 	MyRigidBody* m_pRigidBody = nullptr; //Rigid Body associated with this MyEntity
+	MySolver* m_pMySolver = nullptr; //MySolver (physics) associated with this MyEntity
 
 	matrix4 m_m4ToWorld = IDENTITY_M4; //Model matrix associated with this MyEntity
 	MeshManager* m_pMeshMngr = nullptr; //For rendering shapes
@@ -85,6 +87,12 @@ public:
 	OUTPUT: Rigid Body
 	*/
 	MyRigidBody* GetRigidBody(void);
+	/*
+	USAGE: Gets the Physics associated with this entity
+	ARGUMENTS: ---
+	OUTPUT: MySolver
+	*/
+	MySolver* GetMySolver(void);
 	/*
 	USAGE: Will reply to the question, is the MyEntity Initialized?
 	ARGUMENTS: ---
