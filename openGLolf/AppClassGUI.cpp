@@ -41,11 +41,7 @@ void Application::DrawGUI(void)
 			
 			ImGui::Separator();
 			ImGui::Text("Control:\n");
-			ImGui::Text("   WASD: Movement\n");
-			ImGui::Text("	 F1: Perspective\n");
-			ImGui::Text("	 F2: Orthographic X\n");
-			ImGui::Text("	 F3: Orthographic Y\n");
-			ImGui::Text("	 F4: Orthographic Z\n");
+			ImGui::Text("   AD: Rotate Camera\n");
 		}
 		ImGui::End();
 	}

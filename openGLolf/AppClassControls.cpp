@@ -111,6 +111,12 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		bFPSControl = !bFPSControl;
 		m_pCameraMngr->SetFPS(bFPSControl);
 		break;
+	case sf::Keyboard::Space:
+		//apply force to the ball
+		m_pEntityMngr->GetEntity(0)->GetMySolver()->SetVelocity(hitDirection * -m_fHitPower);
+		//reset the hit power to zero for next swing
+		m_fHitPower = 0;
+		break;
 	
 	case sf::Keyboard::LShift:
 	case sf::Keyboard::RShift:
@@ -384,7 +390,7 @@ void Application::ProcessKeyboard(void)
 
 	if (bMultiplier)
 		fMultiplier = 5.0f;
-
+	/*
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		m_pCameraMngr->MoveForward(m_fMovementSpeed * fMultiplier);
 
@@ -402,6 +408,36 @@ void Application::ProcessKeyboard(void)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 		m_pCameraMngr->MoveVertical(m_fMovementSpeed * fMultiplier);
+	*/
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		cameraRadian -= 0.1f;
+
+		float x = cameraRadius * glm::sin(cameraRadian);
+		float z = cameraRadius * glm::cos(cameraRadian);
+		cameraOffset = vector3(x, cameraOffset.y, z);
+		hitDirection = glm::normalize(vector3(cameraOffset.x, 0.0f, cameraOffset.z));
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+		cameraRadian += 0.1f;
+
+		float x = cameraRadius * glm::sin(cameraRadian);
+		float z = cameraRadius * glm::cos(cameraRadian);
+		cameraOffset = vector3(x, cameraOffset.y, z);
+		hitDirection = glm::normalize(vector3(cameraOffset.x, 0.0f, cameraOffset.z));
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		//Charging up the hit power
+		m_fHitPower += m_fDeltaTime*2;
+		std::cout << m_fHitPower << "\n";
+		//making sure hit power is not above max
+		if (m_fHitPower > m_fHitPowerMax)
+			m_fHitPower = m_fHitPowerMax;
+
+	}
+
 #pragma endregion
 }
 //Joystick

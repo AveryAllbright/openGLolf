@@ -11,6 +11,7 @@ Date: 2017/06
 #include "imgui\ImGuiObject.h"
 
 #include "MyEntityManager.h"
+#include <time.h>
 
 namespace Simplex
 {
@@ -53,9 +54,22 @@ private:
 	ControllerInput* m_pController[8]; //Controller
 	uint m_uActCont = 0; //Active Controller of the Application
 
+	float m_fHitPower = 0.0f; //the strength of the power for the players hit
+	float m_fHitPowerMax = 5.0f; //the maximum strength ofwe can hit the ball with
+	float m_fDeltaTime; //getting delta time eat frame
+	uint m_uClock; 
+
+	uint m_direction; //describes direction we are hitting the ball based on numpad key input.
+
+
 	sf::SoundBuffer m_soundBuffer; //buffer to play sound from
 	sf::Sound m_sound; //sound effect
 	sf::Music m_soundBGM; //background music
+
+	float cameraRadius=  15.0f;
+	vector3 cameraOffset = vector3(0.0f, 2.0f, cameraRadius);
+	float cameraRadian = 0.0f;
+	vector3 hitDirection = vector3(0.0f, 0.0f, 1.0f);
 
 public:
 #pragma region Constructor / Run / Destructor

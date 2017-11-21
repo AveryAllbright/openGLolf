@@ -17,6 +17,7 @@ namespace Simplex
 		vector3 m_v3Velocity = ZERO_V3; //Velocity of the MySolver
 		bool m_bInUse = false; //Is the MySolver being used
 		float m_fMass = 1.0f; //Mass of the solver
+		float m_fFriction = 0.05f; //moved friction to here, can change it with method
 	public:
 		/*
 		USAGE: Constructor
@@ -101,7 +102,7 @@ namespace Simplex
 		ARGUMENTS: float a_fFriction = 0.1f -> friction to apply negative friction gets minimized to 0.01f
 		OUTPUT: ---
 		*/
-		void ApplyFriction(float a_fFriction = 0.1f);
+		void ApplyFriction();
 		/*
 		USAGE: Applies a force to the solver
 		ARGUMENTS: vector3 a_v3Force -> Force to apply
@@ -126,6 +127,7 @@ namespace Simplex
 		OUTPUT: ---
 		*/
 		void ResolveCollision(MySolver* a_pOther);
+		void SetFriction(float a_fFriction);
 	private:
 		/*
 		Usage: Deallocates member fields

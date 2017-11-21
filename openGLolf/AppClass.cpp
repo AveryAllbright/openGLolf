@@ -2,28 +2,54 @@
 using namespace Simplex;
 void Application::InitVariables(void)
 {
-	//Set the position and target of the camera
-	m_pCameraMngr->SetPositionTargetAndUp(
-		vector3(0.0f, 0.0f, 10.0f), //Position
-		vector3(0.0f, 0.0f, 9.0f),	//Target
-		AXIS_Y);					//Up
+
+	/*
+	**	For GUI
+	*/
+
+	m_sProgrammer = "openGLolf";
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
 	//Make Ball
 	m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
 	m_pEntityMngr->UsePhysicsSolver(true, "Ball");
-	m_pEntityMngr->SetPosition(vector3(0.0f, 5.0f, -10.0f), "Ball");
+	vector3 ballPosition = vector3(0.0f, 0.0f, -10.0f);
+	m_pEntityMngr->SetPosition(ballPosition, "Ball");
+
+	//Set the position and target of the camera
+	m_pCameraMngr->SetPositionTargetAndUp(
+		ballPosition + cameraOffset, //Position
+		ballPosition,	//Target
+		AXIS_Y);		//Up
+
+	//Make a hole
+	m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Hole");
+	m_pEntityMngr->UsePhysicsSolver(false, "Hole");
+	vector3 holePosition = vector3(0.0f, 0.0f, -30.0f);
+	m_pEntityMngr->SetPosition(holePosition, "Hole");
 
 	//Make Plane
 	m_pEntityMngr->AddEntity("openGLolf\\GolfPlane.obj", "Plane");
 	m_pEntityMngr->UsePhysicsSolver(false, "Plane");
-	m_pEntityMngr->SetPosition(vector3(0.0f, -5.0f, -10.0f), "Plane");
+	vector3 planePosition = vector3(0.0f, -0.01f, -30.0f);
+	m_pEntityMngr->SetPosition(planePosition, "Plane");
+
+	//Make Crate
+	m_pEntityMngr->AddEntity("Minecraft\\Cube.obj", "Crate");
+	m_pEntityMngr->UsePhysicsSolver(false, "Crate");
+	vector3 cratePosition = vector3(0.0f, 0.0f, -20.0f);
+	m_pEntityMngr->SetPosition(cratePosition, "Crate");
+
+
+	//generate our clock
+	m_uClock= m_pSystem->GenClock();
 }
 void Application::Update(void)
 {
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
+	m_fDeltaTime = m_pSystem->GetDeltaTime(m_uClock);
 
 	//Is the ArcBall active?
 	ArcBall();
@@ -32,15 +58,37 @@ void Application::Update(void)
 	CameraRotation();
 
 	//Set model matrix of ball
-	matrix4 mBall = glm::translate(m_pEntityMngr->GetPosition("Ball"));
+	vector3 ballPosition = m_pEntityMngr->GetPosition("Ball");
+	if (ballPosition.y <= m_pEntityMngr->GetRigidBody()->GetHalfWidth().y) {
+		ballPosition.y = m_pEntityMngr->GetRigidBody()->GetHalfWidth().y+0.4;
+	}
+	matrix4 mBall = glm::translate(ballPosition);
 	m_pEntityMngr->GetModel("Ball")->SetModelMatrix(mBall);
 	m_pEntityMngr->GetRigidBody("Ball")->SetModelMatrix(mBall);
+
+	//Set model matrix of hole
+	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
+	matrix4 mHole = glm::translate(holePosition) * glm::scale(1.0f, 0.001f, 1.0f);
+	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
+	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
+
+	//Set the position and target of the camera
+	m_pCameraMngr->SetPositionTargetAndUp(
+		ballPosition + cameraOffset, //Position
+		ballPosition,	//Target
+		AXIS_Y);		//Up
 
 	//Set model matrix of plane
 	matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane"));
 	m_pEntityMngr->GetModel("Plane")->SetModelMatrix(mPlane);
 	m_pEntityMngr->GetRigidBody("Plane")->SetModelMatrix(mPlane);
+
+	matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition("Crate"));
+	m_pEntityMngr->GetModel("Crate")->SetModelMatrix(mCrate);
+	m_pEntityMngr->GetRigidBody("Crate")->SetModelMatrix(mCrate);
+
 	
+
 	//Update Entity Manager
 	m_pEntityMngr->Update();
 

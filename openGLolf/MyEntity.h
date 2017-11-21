@@ -15,7 +15,7 @@ namespace Simplex
 class MyEntity
 {
 	bool m_bInMemory = false; //loaded flag
-	bool m_bSetAxis = false; //render axis flag
+	bool m_bSetAxis = true; //render axis flag
 	String m_sUniqueID = ""; //Unique identifier name
 
 	uint m_nDimensionCount = 0; //tells how many dimensions this entity lives in

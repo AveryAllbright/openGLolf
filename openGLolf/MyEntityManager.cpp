@@ -182,9 +182,9 @@ void Simplex::MyEntityManager::SetModelMatrix(matrix4 a_m4ToWorld, uint a_uIndex
 
 	//if the index is larger than the number of entries we are asking for the last one
 	if (a_uIndex >= m_uEntityCount)
-		a_uIndex = m_uEntityCount - 1;
+a_uIndex = m_uEntityCount - 1;
 
-	m_mEntityArray[a_uIndex]->SetModelMatrix(a_m4ToWorld);
+m_mEntityArray[a_uIndex]->SetModelMatrix(a_m4ToWorld);
 }
 void Simplex::MyEntityManager::SetPosition(vector3 a_v3Position, uint a_uIndex)
 {
@@ -247,26 +247,48 @@ void Simplex::MyEntityManager::UsePhysicsSolver(bool a_bUse, uint a_uIndex)
 	return m_mEntityArray[a_uIndex]->GetMySolver()->SetInUse(a_bUse);
 }
 //The big 3
-Simplex::MyEntityManager::MyEntityManager(){Init();}
-Simplex::MyEntityManager::MyEntityManager(MyEntityManager const& a_pOther){ }
+Simplex::MyEntityManager::MyEntityManager() { Init(); }
+Simplex::MyEntityManager::MyEntityManager(MyEntityManager const& a_pOther) { }
 Simplex::MyEntityManager& Simplex::MyEntityManager::operator=(MyEntityManager const& a_pOther) { return *this; }
-Simplex::MyEntityManager::~MyEntityManager(){Release();};
+Simplex::MyEntityManager::~MyEntityManager() { Release(); };
 // other methods
 void Simplex::MyEntityManager::Update(void)
 {
+	for (int i = 1; i < m_uEntityCount; i++) {
+		if (m_mEntityArray[0]->IsColliding(m_mEntityArray[i])) {
+			if (m_mEntityArray[i]->GetUniqueID() == "Hole") {
+				std::cout << "IN HOLE" << std::endl;
+				
+			}else if (m_mEntityArray[i]->GetUniqueID() == "Plane") {
+				//plane
+
+			}
+			else {
+				m_mEntityArray[0]->GetMySolver()->ResolveCollision(m_mEntityArray[i]->GetMySolver());
+			}
+		}
+		
+		
+	}
+
+
 	//Clear all collisions
 	for (uint i = 0; i < m_uEntityCount; i++)
 	{
-		m_mEntityArray[i]->ClearCollisionList();
-
+		
 		MySolver* tempSolver = m_mEntityArray[i]->GetMySolver();
 		if (tempSolver->GetInUse()) {
 			tempSolver->Update();
 		}
+
+
+		m_mEntityArray[i]->ClearCollisionList();
 	}
 
+	
+
 	//check collisions
-	for (uint i = 0; i < m_uEntityCount - 1; i++)
+	/*for (uint i = 0; i < m_uEntityCount - 1; i++)
 	{
 		MySolver* tempSolver = m_mEntityArray[i]->GetMySolver();
 		if (tempSolver->GetInUse()) {
@@ -277,15 +299,26 @@ void Simplex::MyEntityManager::Update(void)
 					vector3 posB = m_mEntityArray[j]->GetMySolver()->GetPosition();
 					vector3 velA = m_mEntityArray[i]->GetMySolver()->GetVelocity();
 
+					
+					//	Special collisions
+					
+					if (m_mEntityArray[i]->GetUniqueID() == "Ball") {
+						if (m_mEntityArray[j]->GetUniqueID() == "Hole") {
+							if (glm::distance(velA, ZERO_V3) < 0.01f) {
+							
+							}
+						}
+					}
+					
 					if (posA.y > posB.y) {
-						std::cout << m_mEntityArray[i]->GetUniqueID() << " above " << m_mEntityArray[j]->GetUniqueID() << std::endl;
+						//std::cout << m_mEntityArray[i]->GetUniqueID() << " above " << m_mEntityArray[j]->GetUniqueID() << std::endl;
 
 						if (velA.y < 0.0f) {
 							m_mEntityArray[i]->GetMySolver()->SetVelocity(vector3(velA.x, -velA.y, velA.x));
 						}
 					}
 					else {
-						std::cout << m_mEntityArray[i]->GetUniqueID() << " below " << m_mEntityArray[j]->GetUniqueID() << std::endl;
+						//std::cout << m_mEntityArray[i]->GetUniqueID() << " below " << m_mEntityArray[j]->GetUniqueID() << std::endl;
 
 						if (velA.y > 0.0f) {
 							m_mEntityArray[i]->GetMySolver()->SetVelocity(vector3(velA.x, -velA.y, velA.x));
@@ -295,7 +328,7 @@ void Simplex::MyEntityManager::Update(void)
 			}
 		}
 		tempSolver->Move();
-	}
+	}*/
 }
 void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)
 {
