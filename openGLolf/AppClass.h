@@ -55,7 +55,9 @@ private:
 	uint m_uActCont = 0; //Active Controller of the Application
 
 	float m_fHitPower = 0.0f; //the strength of the power for the players hit
-	float m_fHitPowerMax = 5.0f; //the maximum strength ofwe can hit the ball with
+	float m_fHitPowerMaxHalf = 2.0f; // 1/2 the maximum strength of we can hit the ball with
+	float m_fHitPowerMax = 4.0f; // the maximum strength of we can hit the ball with
+	float m_fHitPowerOffset = 0.0f;
 	float m_fDeltaTime; //getting delta time eat frame
 	uint m_uClock; 
 
@@ -66,8 +68,9 @@ private:
 	sf::Sound m_sound; //sound effect
 	sf::Music m_soundBGM; //background music
 
-	float cameraRadius=  15.0f;
-	vector3 cameraOffset = vector3(0.0f, 2.0f, cameraRadius);
+	float cameraRadius = 15.0f;
+	float cameraHeight = 8.0f;
+	vector3 cameraOffset = vector3(0.0f, cameraHeight, cameraRadius);
 	float cameraRadian = 0.0f;
 	vector3 hitDirection = vector3(0.0f, 0.0f, 1.0f);
 

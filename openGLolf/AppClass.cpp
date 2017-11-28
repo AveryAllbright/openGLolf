@@ -17,6 +17,12 @@ void Application::InitVariables(void)
 	vector3 ballPosition = vector3(0.0f, 0.0f, -10.0f);
 	m_pEntityMngr->SetPosition(ballPosition, "Ball");
 
+	//Make Arrow
+	m_pEntityMngr->AddEntity("openGLolf\\Arrow.obj", "Arrow");
+	m_pEntityMngr->UsePhysicsSolver(false, "Arrow");
+	vector3 arrowPosition = ballPosition;
+	m_pEntityMngr->SetPosition(arrowPosition, "Arrow");
+
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUp(
 		ballPosition + cameraOffset, //Position
@@ -59,16 +65,32 @@ void Application::Update(void)
 
 	//Set model matrix of ball
 	vector3 ballPosition = m_pEntityMngr->GetPosition("Ball");
+	float ballWidth = m_pEntityMngr->GetRigidBody("Ball")->GetHalfWidth().x * 2.0f;
 	if (ballPosition.y <= m_pEntityMngr->GetRigidBody()->GetHalfWidth().y) {
 		ballPosition.y = m_pEntityMngr->GetRigidBody()->GetHalfWidth().y+0.4;
 	}
 	matrix4 mBall = glm::translate(ballPosition);
 	m_pEntityMngr->GetModel("Ball")->SetModelMatrix(mBall);
-	m_pEntityMngr->GetRigidBody("Ball")->SetModelMatrix(mBall);
+	m_pEntityMngr->GetRigidBody("Ball")->SetModelMatrix(mBall * glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y));
+
+	//Set model matrix of arrow
+	m_pEntityMngr->SetPosition(ballPosition - hitDirection, "Arrow");
+	m_pEntityMngr->SetPosition(ballPosition, "Arrow");
+	vector3 arrowPosition = m_pEntityMngr->GetPosition("Arrow");
+	vector3 arrowScale = vector3(1.0f, 0.2f, m_fHitPower);
+	if (m_fHitPowerOffset == 0.0f) {
+		arrowScale = ZERO_V3;
+	}
+	matrix4 mArrow = glm::translate(arrowPosition - (hitDirection * m_fHitPower))
+		* glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y)
+		* glm::scale(arrowScale);
+	m_pEntityMngr->GetModel("Arrow")->SetModelMatrix(mArrow);
+	m_pEntityMngr->GetRigidBody("Arrow")->SetModelMatrix(mArrow);
 
 	//Set model matrix of hole
 	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
-	matrix4 mHole = glm::translate(holePosition) * glm::scale(1.0f, 0.001f, 1.0f);
+	matrix4 mHole = glm::translate(holePosition) 
+		* glm::scale(1.0f, 0.001f, 1.0f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
 
@@ -88,22 +110,8 @@ void Application::Update(void)
 	m_pEntityMngr->GetRigidBody("Crate")->SetModelMatrix(mCrate);
 
 	
-
 	//Update Entity Manager
 	m_pEntityMngr->Update();
-
-	/*
-	std::cout << PrintVector3(m_pEntityMngr->GetPosition("Ball")) << std::endl;
-	std::cout << PrintVector3(m_pEntityMngr->GetPosition("Plane")) << std::endl;
-
-	
-	//check collision
-	MyRigidBody* mBallRB = m_pEntityMngr->GetRigidBody("Ball");
-	MyRigidBody* mPlaneRB = m_pEntityMngr->GetRigidBody("Plane");
-	if (m_pEntityMngr->GetRigidBody("Ball")->IsColliding(mPlaneRB)) {
-		//mBallRB->
-	}
-	*/
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
