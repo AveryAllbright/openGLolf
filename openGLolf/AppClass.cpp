@@ -18,7 +18,7 @@ void Application::InitVariables(void)
 	m_pEntityMngr->SetPosition(ballPosition, "Ball");
 
 	//Make Arrow
-	m_pEntityMngr->AddEntity("openGLolf\\Arrow.obj", "Arrow");
+	m_pEntityMngr->AddEntity("openGLolf\\arrow.obj", "Arrow");
 	m_pEntityMngr->UsePhysicsSolver(false, "Arrow");
 	vector3 arrowPosition = ballPosition;
 	m_pEntityMngr->SetPosition(arrowPosition, "Arrow");
@@ -30,9 +30,9 @@ void Application::InitVariables(void)
 		AXIS_Y);		//Up
 
 	//Make a hole
-	m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Hole");
+	m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
 	m_pEntityMngr->UsePhysicsSolver(false, "Hole");
-	vector3 holePosition = vector3(0.0f, 0.0f, -30.0f);
+	vector3 holePosition = vector3(0.0f, 0.1f, -30.0f);
 	m_pEntityMngr->SetPosition(holePosition, "Hole");
 
 	//Make Plane
@@ -90,7 +90,7 @@ void Application::Update(void)
 	//Set model matrix of hole
 	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
 	matrix4 mHole = glm::translate(holePosition) 
-		* glm::scale(1.0f, 0.001f, 1.0f);
+		* glm::scale(0.2f, 0.01f, 0.2f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
 
