@@ -259,16 +259,13 @@ void Simplex::MyEntityManager::Update(void)
 			if (m_mEntityArray[i]->GetUniqueID() == "Hole") {
 				std::cout << "IN HOLE" << std::endl;
 				
-			}else if (m_mEntityArray[i]->GetUniqueID() == "Plane") {
-				//plane
-
+			}else if (m_mEntityArray[i]->GetUniqueID() == "Plane" || m_mEntityArray[i]->GetUniqueID() == "Arrow") {
+				//EMPTY
 			}
 			else {
 				m_mEntityArray[0]->GetMySolver()->ResolveCollision(m_mEntityArray[i]->GetMySolver());
 			}
-		}
-		
-		
+		}	
 	}
 
 

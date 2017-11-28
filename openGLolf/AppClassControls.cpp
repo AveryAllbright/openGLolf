@@ -115,7 +115,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		//apply force to the ball
 		m_pEntityMngr->GetEntity(0)->GetMySolver()->SetVelocity(hitDirection * -m_fHitPower);
 		//reset the hit power to zero for next swing
-		m_fHitPower = 0;
+		m_fHitPowerOffset = 0;
 		break;
 	
 	case sf::Keyboard::LShift:
@@ -390,25 +390,6 @@ void Application::ProcessKeyboard(void)
 
 	if (bMultiplier)
 		fMultiplier = 5.0f;
-	/*
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		m_pCameraMngr->MoveForward(m_fMovementSpeed * fMultiplier);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		m_pCameraMngr->MoveForward(-m_fMovementSpeed * fMultiplier);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		m_pCameraMngr->MoveSideways(-m_fMovementSpeed * fMultiplier);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		m_pCameraMngr->MoveSideways(m_fMovementSpeed * fMultiplier);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-		m_pCameraMngr->MoveVertical(-m_fMovementSpeed * fMultiplier);
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-		m_pCameraMngr->MoveVertical(m_fMovementSpeed * fMultiplier);
-	*/
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		cameraRadian -= 0.1f;
@@ -430,12 +411,9 @@ void Application::ProcessKeyboard(void)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 		//Charging up the hit power
-		m_fHitPower += m_fDeltaTime*2;
+		m_fHitPowerOffset += m_fDeltaTime*2;
+		m_fHitPower = m_fHitPowerMax - (glm::cos(m_fHitPowerOffset) + 1) * m_fHitPowerMaxHalf;
 		std::cout << m_fHitPower << "\n";
-		//making sure hit power is not above max
-		if (m_fHitPower > m_fHitPowerMax)
-			m_fHitPower = m_fHitPowerMax;
-
 	}
 
 #pragma endregion
