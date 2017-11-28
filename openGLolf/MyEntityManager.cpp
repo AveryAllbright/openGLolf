@@ -46,6 +46,10 @@ int Simplex::MyEntityManager::GetEntityIndex(String a_sUniqueID)
 }
 //Accessors
 Simplex::uint Simplex::MyEntityManager::GetEntityCount(void) {	return m_uEntityCount; }
+
+bool MyEntityManager::GetInHole(void) { return m_bInHole; }
+void MyEntityManager::SetInHole(bool a_bInHole) { m_bInHole= a_bInHole; }
+
 void Simplex::MyEntityManager::ApplyForce(vector3 a_v3Force, String a_sUniqueID)
 {
 	MyEntity* pTempEntity = MyEntity::GetEntity(a_sUniqueID);
@@ -258,7 +262,8 @@ void Simplex::MyEntityManager::Update(void)
 		if (m_mEntityArray[0]->IsColliding(m_mEntityArray[i])) {
 			if (m_mEntityArray[i]->GetUniqueID() == "Hole") {
 				std::cout << "IN HOLE" << std::endl;
-				
+				m_bInHole = true;
+				m_mEntityArray[0]->GetMySolver()->SetPlay(false);
 			}else if (m_mEntityArray[i]->GetUniqueID() == "Plane" || m_mEntityArray[i]->GetUniqueID() == "Arrow") {
 				//EMPTY
 			}

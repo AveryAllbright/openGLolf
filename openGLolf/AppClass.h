@@ -74,6 +74,15 @@ private:
 	float cameraRadian = 0.0f;
 	vector3 hitDirection = vector3(0.0f, 0.0f, 1.0f);
 
+	int m_iShotsTaken = 0;
+
+	enum LevelState
+	{
+		Play, Win
+	};
+
+	LevelState m_lsLevelState = Play;
+
 public:
 #pragma region Constructor / Run / Destructor
 	/*

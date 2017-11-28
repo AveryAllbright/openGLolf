@@ -14,7 +14,7 @@ void Simplex::MyEntity::SetModelMatrix(matrix4 a_m4ToWorld)
 }
 Model* Simplex::MyEntity::GetModel(void){return m_pModel;}
 MyRigidBody* Simplex::MyEntity::GetRigidBody(void){	return m_pRigidBody; }
-MySolver* Simplex::MyEntity::GetMySolver(void) { return m_pMySolver; }
+MySolver* Simplex::MyEntity::GetMySolver(void) { return  m_pMySolver; }
 bool Simplex::MyEntity::IsInitialized(void){ return m_bInMemory; }
 String Simplex::MyEntity::GetUniqueID(void) { return m_sUniqueID; }
 void Simplex::MyEntity::SetAxisVisible(bool a_bSetAxis) { m_bSetAxis = a_bSetAxis; }

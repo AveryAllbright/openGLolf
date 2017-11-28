@@ -53,6 +53,12 @@ void Application::InitVariables(void)
 }
 void Application::Update(void)
 {
+	//if the ball is in the whole set the state to win and the ball's physic solver to have no minimum y
+	if (m_pEntityMngr->GetInHole()) {
+		m_lsLevelState = Win;
+		m_pEntityMngr->GetEntity(0)->GetMySolver()->SetPlay(false);
+		
+	}
 	//Update the system so it knows how much time has passed since the last call
 	m_pSystem->Update();
 	m_fDeltaTime = m_pSystem->GetDeltaTime(m_uClock);
@@ -77,11 +83,11 @@ void Application::Update(void)
 	m_pEntityMngr->SetPosition(ballPosition - hitDirection, "Arrow");
 	m_pEntityMngr->SetPosition(ballPosition, "Arrow");
 	vector3 arrowPosition = m_pEntityMngr->GetPosition("Arrow");
-	vector3 arrowScale = vector3(1.0f, 0.2f, m_fHitPower);
+	vector3 arrowScale = vector3(0.5f, 0.2f, m_fHitPower*0.75);
 	if (m_fHitPowerOffset == 0.0f) {
 		arrowScale = ZERO_V3;
 	}
-	matrix4 mArrow = glm::translate(arrowPosition - (hitDirection * m_fHitPower))
+	matrix4 mArrow = glm::translate(arrowPosition - (hitDirection * m_fHitPower)+ vector3(0.0f,1.0f,0.0f))
 		* glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y)
 		* glm::scale(arrowScale);
 	m_pEntityMngr->GetModel("Arrow")->SetModelMatrix(mArrow);
@@ -93,12 +99,23 @@ void Application::Update(void)
 		* glm::scale(0.2f, 0.01f, 0.2f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
-
 	//Set the position and target of the camera
-	m_pCameraMngr->SetPositionTargetAndUp(
-		ballPosition + cameraOffset, //Position
-		ballPosition,	//Target
-		AXIS_Y);		//Up
+	//if we are playing the target is the ball
+	if (m_lsLevelState == Play) {
+
+		m_pCameraMngr->SetPositionTargetAndUp(
+			ballPosition + cameraOffset, //Position
+			ballPosition,	//Target
+			AXIS_Y);		//Up
+	}else {
+
+		m_pCameraMngr->SetPositionTargetAndUp(
+			holePosition + cameraOffset, //Position
+			holePosition,	//Target
+			AXIS_Y);		//Up
+	}
+	
+
 
 	//Set model matrix of plane
 	matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane"))*glm::scale(vector3(5.0f,1.0f,5.0f));

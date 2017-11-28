@@ -18,6 +18,8 @@ namespace Simplex
 		bool m_bInUse = false; //Is the MySolver being used
 		float m_fMass = 1.0f; //Mass of the solver
 		float m_fFriction = 0.05f; //moved friction to here, can change it with method
+		bool m_bPlay; //if we are playing the actual game or not
+
 	public:
 		/*
 		USAGE: Constructor
@@ -128,6 +130,8 @@ namespace Simplex
 		*/
 		void ResolveCollision(MySolver* a_pOther);
 		void SetFriction(float a_fFriction);
+		void SetPlay(bool abPlay);
+	
 	private:
 		/*
 		Usage: Deallocates member fields

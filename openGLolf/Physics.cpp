@@ -7,6 +7,7 @@ void MySolver::Init(void)
 	m_v3Position = ZERO_V3;
 	m_v3Velocity = ZERO_V3;
 	m_fMass = 1.0f;
+	m_bPlay = true;
 }
 void MySolver::Swap(MySolver& other)
 {
@@ -24,6 +25,7 @@ MySolver::MySolver(MySolver const& other)
 	m_v3Velocity = other.m_v3Velocity;
 	m_v3Position = other.m_v3Position;
 	m_fMass = other.m_fMass;
+	m_bPlay = other.m_bPlay;
 }
 MySolver& MySolver::operator=(MySolver const& other)
 {
@@ -52,6 +54,9 @@ void MySolver::SetMass(float a_fMass) { m_fMass = a_fMass; }
 float MySolver::GetMass(void) { return m_fMass; }
 
 void MySolver::SetFriction(float a_fFriction) { m_fFriction = a_fFriction; }
+
+void MySolver::SetPlay(bool a_bPlay) { m_bPlay = a_bPlay; }
+
 
 //Methods
 void MySolver::ApplyFriction()
@@ -100,19 +105,19 @@ void MySolver::Update(void)
 	m_v3Velocity = CalculateMaxVelocity(m_v3Velocity, fMaxVelocity);
 
 	ApplyFriction();
-	m_v3Velocity = RoundSmallVelocity(m_v3Velocity, 0.028f);
+	m_v3Velocity = RoundSmallVelocity(m_v3Velocity, 0.018f);
 
 	Move();
 }
 void MySolver::Move(void) {
 	m_v3Position += m_v3Velocity;
-	
-	if (m_v3Position.y <= 0)
-	{
-		m_v3Position.y = 0;
-		m_v3Velocity.y = 0;
-	}
-	
+	if (m_bPlay) {
+		if (m_v3Position.y <= 0)
+		{
+			m_v3Position.y = 0;
+			m_v3Velocity.y = 0;
+		}
+	} 
 	m_v3Acceleration = ZERO_V3;
 }
 void MySolver::ResolveCollision(MySolver* a_pOther)
@@ -124,16 +129,16 @@ void MySolver::ResolveCollision(MySolver* a_pOther)
 	if (fMagThis > 0.015f || fMagOther > 0.015f)
 	{
 		//a_pOther->ApplyForce(GetVelocity());
-		ApplyForce(-m_v3Velocity);
-		a_pOther->ApplyForce(m_v3Velocity);
+		ApplyForce(-m_v3Velocity*2.0f);
+		a_pOther->ApplyForce(m_v3Velocity*2.0f);
 	}
 	else 
 	{
 		vector3 v3Direction = m_v3Position - a_pOther->m_v3Position;
 		v3Direction = glm::normalize(v3Direction);
 		v3Direction *= 0.04f;
-		ApplyForce(v3Direction);
-		a_pOther->ApplyForce(-v3Direction);
+		ApplyForce(v3Direction*2.0f);
+		a_pOther->ApplyForce(-v3Direction*2.0f);
 	}
 	
 }
