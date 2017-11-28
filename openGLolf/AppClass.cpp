@@ -36,7 +36,7 @@ void Application::InitVariables(void)
 	m_pEntityMngr->SetPosition(holePosition, "Hole");
 
 	//Make Plane
-	m_pEntityMngr->AddEntity("openGLolf\\GolfPlane.obj", "Plane");
+	m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane");
 	m_pEntityMngr->UsePhysicsSolver(false, "Plane");
 	vector3 planePosition = vector3(0.0f, -0.01f, -30.0f);
 	m_pEntityMngr->SetPosition(planePosition, "Plane");
@@ -101,7 +101,8 @@ void Application::Update(void)
 		AXIS_Y);		//Up
 
 	//Set model matrix of plane
-	matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane"));
+	matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane"))*glm::scale(vector3(5.0f,1.0f,5.0f));
+	
 	m_pEntityMngr->GetModel("Plane")->SetModelMatrix(mPlane);
 	m_pEntityMngr->GetRigidBody("Plane")->SetModelMatrix(mPlane);
 
