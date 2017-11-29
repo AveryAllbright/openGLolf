@@ -34,6 +34,8 @@ void Application::InitVariables(void)
 		std::string crateName;
 #pragma endregion
 
+		
+
 
 		//iterate through the course data and spawn the course
 		for (int i = 0; i < m_oaCourseData.size(); i++)
@@ -57,7 +59,7 @@ void Application::InitVariables(void)
 				
 				m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
 				m_pEntityMngr->UsePhysicsSolver(false, "Hole");
-				holePosition = vector3(temp.x, 0.0f, temp.z);
+				holePosition = vector3(temp.x, .0f, -temp.z);
 				m_pEntityMngr->SetPosition(holePosition, "Hole");
 				
 				break;
@@ -68,7 +70,7 @@ void Application::InitVariables(void)
 				m_pEntityMngr->AddEntity("openGLolf\\wall.obj", wallName);
 				m_pEntityMngr->UsePhysicsSolver(false, wallName);
 				wallPosition = vector3(temp.x, -1.0f, -temp.z);
-				 m_pEntityMngr->SetPosition(wallPosition, wallName);
+				m_pEntityMngr->SetPosition(wallPosition, wallName);
 				wallCount++; 
 				walls.push_back(temp);
 				break;
@@ -161,11 +163,12 @@ void Application::Update(void)
 	//Set model matrix of hole
 	
 	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
-	std::cout << holePosition.x << ","<<holePosition.y<< "," << holePosition.z<<"\n";
+	std::cout << holePosition.x << "," << holePosition.y << "," << holePosition.z << "\n";
 	matrix4 mHole = glm::translate(holePosition)
-		 *glm::scale(1.0f, 0.5f, 1.0f);
+		 *glm::scale(.2f, 0.05f, .2f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
+
 	
 
 	//Set the position and target of the camera

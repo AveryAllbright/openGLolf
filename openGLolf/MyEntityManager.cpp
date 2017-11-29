@@ -290,48 +290,7 @@ void Simplex::MyEntityManager::Update(void)
 
 	
 
-	//check collisions
-	/*for (uint i = 0; i < m_uEntityCount - 1; i++)
-	{
-		MySolver* tempSolver = m_mEntityArray[i]->GetMySolver();
-		if (tempSolver->GetInUse()) {
-			for (uint j = i + 1; j < m_uEntityCount; j++)
-			{
-				if (m_mEntityArray[i]->IsColliding(m_mEntityArray[j])) {
-					vector3 posA = m_mEntityArray[i]->GetMySolver()->GetPosition();
-					vector3 posB = m_mEntityArray[j]->GetMySolver()->GetPosition();
-					vector3 velA = m_mEntityArray[i]->GetMySolver()->GetVelocity();
-
-					
-					//	Special collisions
-					
-					if (m_mEntityArray[i]->GetUniqueID() == "Ball") {
-						if (m_mEntityArray[j]->GetUniqueID() == "Hole") {
-							if (glm::distance(velA, ZERO_V3) < 0.01f) {
-							
-							}
-						}
-					}
-					
-					if (posA.y > posB.y) {
-						//std::cout << m_mEntityArray[i]->GetUniqueID() << " above " << m_mEntityArray[j]->GetUniqueID() << std::endl;
-
-						if (velA.y < 0.0f) {
-							m_mEntityArray[i]->GetMySolver()->SetVelocity(vector3(velA.x, -velA.y, velA.x));
-						}
-					}
-					else {
-						//std::cout << m_mEntityArray[i]->GetUniqueID() << " below " << m_mEntityArray[j]->GetUniqueID() << std::endl;
-
-						if (velA.y > 0.0f) {
-							m_mEntityArray[i]->GetMySolver()->SetVelocity(vector3(velA.x, -velA.y, velA.x));
-						}
-					}
-				}
-			}
-		}
-		tempSolver->Move();
-	}*/
+	
 }
 void Simplex::MyEntityManager::AddEntity(String a_sFileName, String a_sUniqueID)
 {
