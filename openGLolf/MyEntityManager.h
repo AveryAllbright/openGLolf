@@ -18,6 +18,7 @@ class MyEntityManager
 	PEntity* m_mEntityArray = nullptr; //array of MyEntity pointers
 	static MyEntityManager* m_pInstance; // Singleton pointer
 	bool m_bInHole = false;
+	int ballId = 0;
 public:
 	/*
 	Usage: Gets the singleton pointer

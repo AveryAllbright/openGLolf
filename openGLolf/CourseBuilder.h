@@ -23,8 +23,9 @@ public:
 
 	int m_naMapData[10][10];
 	std::vector<CourseControl> m_oaCourse; 
-	float fDisplace = 5.f;
-	
+	float fDisplace = 10.f;
+	float fDisplaceHalf = 5.0f;
+
 	CourseBuilder();
 	~CourseBuilder();
 

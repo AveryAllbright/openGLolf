@@ -27,7 +27,8 @@ void Application::InitVariables(void)
 		vector3 holePosition;
 		vector3 cratePosition;
 		vector3 ballPosition;
-		vector3 arrowPosition;		
+		vector3 arrowPosition;	
+		vector3 wallPosition;
 
 #pragma endregion
 
@@ -41,34 +42,42 @@ void Application::InitVariables(void)
 			{
 				//Green
 			case 0:
-				m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane" + planeCount);
-				m_pEntityMngr->UsePhysicsSolver(false, "Plane" + planeCount);
-				planePosition = vector3(temp.x, -0.1f, -temp.z);
-				m_pEntityMngr->SetPosition(planePosition, "Plane" + planeCount);
+				m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane" + std::to_string(planeCount));
+				m_pEntityMngr->UsePhysicsSolver(false, "Plane" + std::to_string(planeCount));
+				planePosition = vector3(temp.x, -.7f, -temp.z);
+				m_pEntityMngr->SetPosition(planePosition, "Plane" + std::to_string(planeCount));
 				planeCount++;
 				break;
 
 				//Hole
 			case 1:
-				/*
+				
 				m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
 				m_pEntityMngr->UsePhysicsSolver(false, "Hole");
-				holePosition = vector3(temp.x * 100, 0.1f, temp.z);
+				holePosition = vector3(temp.x, 0.0f, temp.z);
 				m_pEntityMngr->SetPosition(holePosition, "Hole");
-				*/
+				
 				break;
 
 				//Wall
 			case 2:
+				
+				m_pEntityMngr->AddEntity("openGLolf\\wall.obj", "Wall" + std::to_string(wallCount));
+				m_pEntityMngr->UsePhysicsSolver(false, "Wall" + std::to_string(wallCount));
+				wallPosition = vector3(temp.z, -0.5f, -temp.x);
 
+				 m_pEntityMngr->SetPosition(wallPosition, "Wall" + std::to_string(wallCount));
+				wallCount++; 
 				break;
 
 				//Obstacle
 			case 3:
-				m_pEntityMngr->AddEntity("openGLolf\\Pollard.obj", "Crate" + obCount);
-				m_pEntityMngr->UsePhysicsSolver(false, "Crate" + obCount);
-				cratePosition = vector3(temp.x, 2.0f, -temp.z);
-				m_pEntityMngr->SetPosition(cratePosition, "Crate" + obCount);
+				m_pEntityMngr->AddEntity("openGLolf\\Pollard.obj", "Crate" + std::to_string(obCount));
+				m_pEntityMngr->UsePhysicsSolver(false, "Crate" + std::to_string(obCount));
+				cratePosition = vector3(temp.x, -.6f, -temp.z);
+				
+
+				m_pEntityMngr->SetPosition(cratePosition, "Crate" + std::to_string(obCount));
 				obCount++;				
 				break;
 
@@ -76,7 +85,7 @@ void Application::InitVariables(void)
 			case 4:
 				m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
 				m_pEntityMngr->UsePhysicsSolver(true, "Ball");
-				ballPosition = vector3(temp.x, 0.0f, -temp.z);
+				ballPosition = vector3(temp.x, .0f, -temp.z);
 				m_pEntityMngr->SetPosition(ballPosition, "Ball");
 
 				//Make Arrow
@@ -90,7 +99,7 @@ void Application::InitVariables(void)
 					ballPosition + cameraOffset, //Position
 					ballPosition,	//Target
 					AXIS_Y);		//Up
-
+				ballId = m_pEntityMngr->GetEntityIndex("Ball");
 				break;
 
 			} //end switch
@@ -98,6 +107,8 @@ void Application::InitVariables(void)
 	} //end if loaded
 
 	//END TODO
+
+	
 
 	//generate our clock
 	m_uClock= m_pSystem->GenClock();
@@ -122,6 +133,7 @@ void Application::Update(void)
 
 	//Set model matrix of ball
 	vector3 ballPosition = m_pEntityMngr->GetPosition("Ball");
+	
 	float ballWidth = m_pEntityMngr->GetRigidBody("Ball")->GetHalfWidth().x * 2.0f;
 	if (ballPosition.y <= m_pEntityMngr->GetRigidBody()->GetHalfWidth().y) {
 		ballPosition.y = m_pEntityMngr->GetRigidBody()->GetHalfWidth().y+0.4;
@@ -145,13 +157,14 @@ void Application::Update(void)
 	m_pEntityMngr->GetRigidBody("Arrow")->SetModelMatrix(mArrow);
 
 	//Set model matrix of hole
-	/*
+	
 	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
-	matrix4 mHole = glm::translate(holePosition) 
-		* glm::scale(0.02f, 0.01f, 0.02f);
+	std::cout << holePosition.x << ","<<holePosition.y<< "," << holePosition.z<<"\n";
+	matrix4 mHole = glm::translate(holePosition)
+		 *glm::scale(1.0f, 0.5f, 1.0f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
-	*/
+	
 
 	//Set the position and target of the camera
 	//if we are playing the target is the ball
@@ -162,11 +175,11 @@ void Application::Update(void)
 			ballPosition,	//Target
 			AXIS_Y);		//Up
 	}else {
-		/*
+		
 		m_pCameraMngr->SetPositionTargetAndUp(
 			holePosition + cameraOffset, //Position
 			holePosition,	//Target
-			AXIS_Y);		//Up */
+			AXIS_Y);		//Up 
 	}
 	
 
@@ -174,18 +187,25 @@ void Application::Update(void)
 	//Set model matrix of planes
 	for (int i = 0; i < planeCount; i++)
 	{
-		matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane" + i))*glm::scale(vector3(1.f, 1.0f, 1.f));
+		matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane" + std::to_string(i)))*glm::scale(vector3(2.17f, 1.0f, 2.17f));
 
-		m_pEntityMngr->GetModel("Plane" + i)->SetModelMatrix(mPlane);
-		m_pEntityMngr->GetRigidBody("Plane" + i)->SetModelMatrix(mPlane);
+		m_pEntityMngr->GetModel("Plane" + std::to_string(i))->SetModelMatrix(mPlane);
+		m_pEntityMngr->GetRigidBody("Plane" + std::to_string(i))->SetModelMatrix(mPlane);
 
 	}
 
 	for (int i = 0; i < obCount; i++)
 	{
-		matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition("Crate" + i));
-		m_pEntityMngr->GetModel("Crate" + i)->SetModelMatrix(mCrate);
-		m_pEntityMngr->GetRigidBody("Crate" + i)->SetModelMatrix(mCrate);
+		matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition("Crate" + std::to_string(i)));
+		m_pEntityMngr->GetModel("Crate" + std::to_string(i))->SetModelMatrix(mCrate);
+		m_pEntityMngr->GetRigidBody("Crate" + std::to_string(i))->SetModelMatrix(mCrate);
+	}
+	
+	for (int i = 0; i < wallCount; i++)
+	{
+		matrix4 mWall = glm::translate(m_pEntityMngr->GetPosition("Wall" + std::to_string(i))) * glm::scale(vector3(.1f, .1f, .1f));
+		m_pEntityMngr->GetModel("Wall" + std::to_string(i))->SetModelMatrix(mWall);
+		m_pEntityMngr->GetRigidBody("Wall" + std::to_string(i))->SetModelMatrix(mWall);
 	}
 	
 	//Update Entity Manager

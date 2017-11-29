@@ -113,7 +113,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		break;
 	case sf::Keyboard::Space:
 		//apply force to the ball
-		m_pEntityMngr->GetEntity(0)->GetMySolver()->SetVelocity(hitDirection * -m_fHitPower);
+		m_pEntityMngr->GetEntity(ballId)->GetMySolver()->SetVelocity(hitDirection * -m_fHitPower);
 		//reset the hit power to zero for next swing
 		m_fHitPowerOffset = 0;
 		break;
@@ -392,7 +392,7 @@ void Application::ProcessKeyboard(void)
 		fMultiplier = 5.0f;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		cameraRadian -= 0.1f;
+		cameraRadian += 0.05f;
 
 		float x = cameraRadius * glm::sin(cameraRadian);
 		float z = cameraRadius * glm::cos(cameraRadian);
@@ -401,7 +401,7 @@ void Application::ProcessKeyboard(void)
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		cameraRadian += 0.1f;
+		cameraRadian -= 0.05f;
 
 		float x = cameraRadius * glm::sin(cameraRadian);
 		float z = cameraRadius * glm::cos(cameraRadian);
@@ -413,7 +413,7 @@ void Application::ProcessKeyboard(void)
 		//Charging up the hit power
 		m_fHitPowerOffset += m_fDeltaTime*2;
 		m_fHitPower = m_fHitPowerMax - (glm::cos(m_fHitPowerOffset) + 1) * m_fHitPowerMaxHalf;
-		std::cout << m_fHitPower << "\n";
+		
 	}
 
 #pragma endregion

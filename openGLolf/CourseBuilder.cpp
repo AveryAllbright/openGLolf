@@ -56,11 +56,13 @@ bool CourseBuilder::ReadMap(std::string a_sLoc)
 
 void CourseBuilder::BuildMap()
 {
-	CourseControl temp;
+	
 	for (int i = 0; i < 10; i++)
 	{
 		for (int j = 0; j < 10; j++)
 		{
+			CourseControl temp;
+
 			int nType = m_naMapData[i][j];
 		
 			//For each square that is a part of the course, make a greens tile. 
@@ -97,7 +99,7 @@ void CourseBuilder::BuildMap()
 				if (i - 1 < 0 || m_naMapData[i - 1][j] == -1) 
 				{
 					temp.type = 2;
-					temp.z = (j * fDisplace) - fDisplace; //Center of plane minus width of plane, hopefully
+					temp.z = (j * fDisplace) + fDisplaceHalf; //Center of plane minus width of plane, hopefully
 					temp.x = i * fDisplace; //Centered with the plane center for that row.
 					temp.bRot90 = false; //is left right
 					m_oaCourse.push_back(temp);
@@ -105,7 +107,7 @@ void CourseBuilder::BuildMap()
 				if (i + 1 > 9 || m_naMapData[i + 1][j] == -1) 
 				{
 					temp.type = 2;
-					temp.z = (j * fDisplace) + fDisplace; //Center of plane plus width of plane, hopefully
+					temp.z = (j * fDisplace) - fDisplaceHalf; //Center of plane plus width of plane, hopefully
 					temp.x = i * fDisplace; //Centered with the plane center for that row.
 					temp.bRot90 = false; //is left right
 					m_oaCourse.push_back(temp);
@@ -114,7 +116,7 @@ void CourseBuilder::BuildMap()
 				{
 					temp.type = 2;
 					temp.z = j * fDisplace; //Centered with the plane center for that column.
-					temp.x = (i * fDisplace) + fDisplace; //Center of the plane plus the width of the plane, backed into the scene
+					temp.x = (i * fDisplace) - fDisplaceHalf; //Center of the plane plus the width of the plane, backed into the scene
 					temp.bRot90 = true; //is top bottom
 					m_oaCourse.push_back(temp);
 				}
@@ -122,7 +124,7 @@ void CourseBuilder::BuildMap()
 				{
 					temp.type = 2;
 					temp.z = j * fDisplace; //Centered with the plane center for that column.
-					temp.x = (i * fDisplace) - fDisplace; //Center of the plane plus the width of the plane, towards the screen
+					temp.x = (i * fDisplace) + fDisplaceHalf; //Center of the plane plus the width of the plane, towards the screen
 					temp.bRot90 = true; //is top bottom
 					m_oaCourse.push_back(temp);
 				}
@@ -135,7 +137,6 @@ void CourseBuilder::BuildMap()
 				temp.x = i * fDisplace;
 				temp.z = j * fDisplace;
 				temp.bRot90 = false;
-				std::cout << temp.x << temp.z;
 				m_oaCourse.push_back(temp);
 				break;
 

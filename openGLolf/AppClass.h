@@ -89,6 +89,7 @@ private:
 	int planeCount = 0;
 	int obCount = 0;
 	int wallCount = 0;
+	int ballId = 0;
 
 public:
 #pragma region Constructor / Run / Destructor
@@ -361,6 +362,8 @@ private:
 	*/
 	Application& operator=(Application const& input);
 #pragma endregion
+
+
 };
 
 }//namespace Simplex
