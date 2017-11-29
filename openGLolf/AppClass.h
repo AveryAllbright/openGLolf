@@ -11,6 +11,7 @@ Date: 2017/06
 #include "imgui\ImGuiObject.h"
 
 #include "MyEntityManager.h"
+#include "CourseBuilder.h"
 #include <time.h>
 
 namespace Simplex
@@ -82,6 +83,12 @@ private:
 	};
 
 	LevelState m_lsLevelState = Play;
+
+	//Port the course data to here
+	std::vector<CourseBuilder::CourseControl> m_oaCourseData;
+	int planeCount = 0;
+	int obCount = 0;
+	int wallCount = 0;
 
 public:
 #pragma region Constructor / Run / Destructor

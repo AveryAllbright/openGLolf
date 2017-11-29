@@ -7,46 +7,97 @@ void Application::InitVariables(void)
 	**	For GUI
 	*/
 
-	m_sProgrammer = "openGLolf";
+	m_sProgrammer = "Par for the Course";
 
 	m_pLightMngr->SetPosition(vector3(0.0f, 3.0f, 13.0f), 1); //set the position of first light (0 is reserved for ambient light)
 
-	//Make Ball
-	m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
-	m_pEntityMngr->UsePhysicsSolver(true, "Ball");
-	vector3 ballPosition = vector3(0.0f, 0.0f, -10.0f);
-	m_pEntityMngr->SetPosition(ballPosition, "Ball");
+	//TODO : Move the following to new method == InstantiateMap();
+	//InitMap
+	CourseBuilder TestBuilder;
+	std::string loc = "Data\\Courses\\map1.txt"; //Load First Map
+	bool bDidRead = TestBuilder.ReadMap(loc); //assure map has loaded
+	if (bDidRead) 
+	{ 
+		TestBuilder.BuildMap(); //build the map from the files
+		m_oaCourseData = TestBuilder.m_oaCourse; //set the course data to be available locally
 
-	//Make Arrow
-	m_pEntityMngr->AddEntity("openGLolf\\arrow.obj", "Arrow");
-	m_pEntityMngr->UsePhysicsSolver(false, "Arrow");
-	vector3 arrowPosition = ballPosition;
-	m_pEntityMngr->SetPosition(arrowPosition, "Arrow");
 
-	//Set the position and target of the camera
-	m_pCameraMngr->SetPositionTargetAndUp(
-		ballPosition + cameraOffset, //Position
-		ballPosition,	//Target
-		AXIS_Y);		//Up
+#pragma region init posVec
+		vector3 planePosition;
+		vector3 holePosition;
+		vector3 cratePosition;
+		vector3 ballPosition;
+		vector3 arrowPosition;		
 
-	//Make a hole
-	m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
-	m_pEntityMngr->UsePhysicsSolver(false, "Hole");
-	vector3 holePosition = vector3(0.0f, 0.1f, -30.0f);
-	m_pEntityMngr->SetPosition(holePosition, "Hole");
+#pragma endregion
 
-	//Make Plane
-	m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane");
-	m_pEntityMngr->UsePhysicsSolver(false, "Plane");
-	vector3 planePosition = vector3(0.0f, -0.01f, -30.0f);
-	m_pEntityMngr->SetPosition(planePosition, "Plane");
 
-	//Make Crate
-	m_pEntityMngr->AddEntity("Minecraft\\Cube.obj", "Crate");
-	m_pEntityMngr->UsePhysicsSolver(false, "Crate");
-	vector3 cratePosition = vector3(0.0f, 0.0f, -20.0f);
-	m_pEntityMngr->SetPosition(cratePosition, "Crate");
+		//iterate through the course data and spawn the course
+		for (int i = 0; i < m_oaCourseData.size(); i++)
+		{
+			CourseBuilder::CourseControl temp = m_oaCourseData[i];
+			
+			switch (temp.type)
+			{
+				//Green
+			case 0:
+				m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane" + planeCount);
+				m_pEntityMngr->UsePhysicsSolver(false, "Plane" + planeCount);
+				planePosition = vector3(temp.x, -0.1f, -temp.z);
+				m_pEntityMngr->SetPosition(planePosition, "Plane" + planeCount);
+				planeCount++;
+				break;
 
+				//Hole
+			case 1:
+				/*
+				m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
+				m_pEntityMngr->UsePhysicsSolver(false, "Hole");
+				holePosition = vector3(temp.x * 100, 0.1f, temp.z);
+				m_pEntityMngr->SetPosition(holePosition, "Hole");
+				*/
+				break;
+
+				//Wall
+			case 2:
+
+				break;
+
+				//Obstacle
+			case 3:
+				m_pEntityMngr->AddEntity("openGLolf\\Pollard.obj", "Crate" + obCount);
+				m_pEntityMngr->UsePhysicsSolver(false, "Crate" + obCount);
+				cratePosition = vector3(temp.x, 2.0f, -temp.z);
+				m_pEntityMngr->SetPosition(cratePosition, "Crate" + obCount);
+				obCount++;				
+				break;
+
+				//Spawn Ball
+			case 4:
+				m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
+				m_pEntityMngr->UsePhysicsSolver(true, "Ball");
+				ballPosition = vector3(temp.x, 0.0f, -temp.z);
+				m_pEntityMngr->SetPosition(ballPosition, "Ball");
+
+				//Make Arrow
+				m_pEntityMngr->AddEntity("openGLolf\\arrow.obj", "Arrow");
+				m_pEntityMngr->UsePhysicsSolver(false, "Arrow");
+				arrowPosition = ballPosition;
+				m_pEntityMngr->SetPosition(arrowPosition, "Arrow");
+
+				//Set the position and target of the camera
+				m_pCameraMngr->SetPositionTargetAndUp(
+					ballPosition + cameraOffset, //Position
+					ballPosition,	//Target
+					AXIS_Y);		//Up
+
+				break;
+
+			} //end switch
+		} //end for
+	} //end if loaded
+
+	//END TODO
 
 	//generate our clock
 	m_uClock= m_pSystem->GenClock();
@@ -94,11 +145,14 @@ void Application::Update(void)
 	m_pEntityMngr->GetRigidBody("Arrow")->SetModelMatrix(mArrow);
 
 	//Set model matrix of hole
+	/*
 	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
 	matrix4 mHole = glm::translate(holePosition) 
-		* glm::scale(0.2f, 0.01f, 0.2f);
+		* glm::scale(0.02f, 0.01f, 0.02f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
+	*/
+
 	//Set the position and target of the camera
 	//if we are playing the target is the ball
 	if (m_lsLevelState == Play) {
@@ -108,25 +162,31 @@ void Application::Update(void)
 			ballPosition,	//Target
 			AXIS_Y);		//Up
 	}else {
-
+		/*
 		m_pCameraMngr->SetPositionTargetAndUp(
 			holePosition + cameraOffset, //Position
 			holePosition,	//Target
-			AXIS_Y);		//Up
+			AXIS_Y);		//Up */
 	}
 	
 
 
-	//Set model matrix of plane
-	matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane"))*glm::scale(vector3(5.0f,1.0f,5.0f));
-	
-	m_pEntityMngr->GetModel("Plane")->SetModelMatrix(mPlane);
-	m_pEntityMngr->GetRigidBody("Plane")->SetModelMatrix(mPlane);
+	//Set model matrix of planes
+	for (int i = 0; i < planeCount; i++)
+	{
+		matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane" + i))*glm::scale(vector3(1.f, 1.0f, 1.f));
 
-	matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition("Crate"));
-	m_pEntityMngr->GetModel("Crate")->SetModelMatrix(mCrate);
-	m_pEntityMngr->GetRigidBody("Crate")->SetModelMatrix(mCrate);
+		m_pEntityMngr->GetModel("Plane" + i)->SetModelMatrix(mPlane);
+		m_pEntityMngr->GetRigidBody("Plane" + i)->SetModelMatrix(mPlane);
 
+	}
+
+	for (int i = 0; i < obCount; i++)
+	{
+		matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition("Crate" + i));
+		m_pEntityMngr->GetModel("Crate" + i)->SetModelMatrix(mCrate);
+		m_pEntityMngr->GetRigidBody("Crate" + i)->SetModelMatrix(mCrate);
+	}
 	
 	//Update Entity Manager
 	m_pEntityMngr->Update();
