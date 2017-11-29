@@ -32,6 +32,8 @@ void Application::InitVariables(void)
 
 #pragma endregion
 
+		
+
 
 		//iterate through the course data and spawn the course
 		for (int i = 0; i < m_oaCourseData.size(); i++)
@@ -44,7 +46,7 @@ void Application::InitVariables(void)
 			case 0:
 				m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane" + std::to_string(planeCount));
 				m_pEntityMngr->UsePhysicsSolver(false, "Plane" + std::to_string(planeCount));
-				planePosition = vector3(temp.x, -.7f, -temp.z);
+				planePosition = vector3(temp.x, 0.0f, -temp.z);
 				m_pEntityMngr->SetPosition(planePosition, "Plane" + std::to_string(planeCount));
 				planeCount++;
 				break;
@@ -54,7 +56,7 @@ void Application::InitVariables(void)
 				
 				m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
 				m_pEntityMngr->UsePhysicsSolver(false, "Hole");
-				holePosition = vector3(temp.x, 0.0f, temp.z);
+				holePosition = vector3(temp.x, .0f, -temp.z);
 				m_pEntityMngr->SetPosition(holePosition, "Hole");
 				
 				break;
@@ -64,7 +66,7 @@ void Application::InitVariables(void)
 				
 				m_pEntityMngr->AddEntity("openGLolf\\wall.obj", "Wall" + std::to_string(wallCount));
 				m_pEntityMngr->UsePhysicsSolver(false, "Wall" + std::to_string(wallCount));
-				wallPosition = vector3(temp.z, -0.5f, -temp.x);
+				wallPosition = vector3(temp.z, -0.3f, -temp.x);
 
 				 m_pEntityMngr->SetPosition(wallPosition, "Wall" + std::to_string(wallCount));
 				wallCount++; 
@@ -74,7 +76,7 @@ void Application::InitVariables(void)
 			case 3:
 				m_pEntityMngr->AddEntity("openGLolf\\Pollard.obj", "Crate" + std::to_string(obCount));
 				m_pEntityMngr->UsePhysicsSolver(false, "Crate" + std::to_string(obCount));
-				cratePosition = vector3(temp.x, -.6f, -temp.z);
+				cratePosition = vector3(temp.x, -.15f, -temp.z);
 				
 
 				m_pEntityMngr->SetPosition(cratePosition, "Crate" + std::to_string(obCount));
@@ -159,11 +161,12 @@ void Application::Update(void)
 	//Set model matrix of hole
 	
 	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
-	std::cout << holePosition.x << ","<<holePosition.y<< "," << holePosition.z<<"\n";
+	std::cout << holePosition.x << "," << holePosition.y << "," << holePosition.z << "\n";
 	matrix4 mHole = glm::translate(holePosition)
-		 *glm::scale(1.0f, 0.5f, 1.0f);
+		 *glm::scale(.2f, 0.05f, .2f);
 	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
 	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
+
 	
 
 	//Set the position and target of the camera
