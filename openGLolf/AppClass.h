@@ -90,6 +90,7 @@ private:
 	int obCount = 0;
 	int wallCount = 0;
 	int ballId = 0;
+	std::vector<CourseBuilder::CourseControl> walls;
 
 public:
 #pragma region Constructor / Run / Destructor

@@ -29,7 +29,9 @@ void Application::InitVariables(void)
 		vector3 ballPosition;
 		vector3 arrowPosition;	
 		vector3 wallPosition;
-
+		std::string planeName;
+		std::string wallName;
+		std::string crateName;
 #pragma endregion
 
 
@@ -42,10 +44,11 @@ void Application::InitVariables(void)
 			{
 				//Green
 			case 0:
-				m_pEntityMngr->AddEntity("openGLolf\\plane.obj", "Plane" + std::to_string(planeCount));
-				m_pEntityMngr->UsePhysicsSolver(false, "Plane" + std::to_string(planeCount));
-				planePosition = vector3(temp.x, -.7f, -temp.z);
-				m_pEntityMngr->SetPosition(planePosition, "Plane" + std::to_string(planeCount));
+				planeName = "Plane" + std::to_string(planeCount);
+				m_pEntityMngr->AddEntity("openGLolf\\plane.obj", planeName);
+				m_pEntityMngr->UsePhysicsSolver(false, planeName);
+				planePosition = vector3(temp.x, -0.7f, -temp.z);
+				m_pEntityMngr->SetPosition(planePosition, planeName);
 				planeCount++;
 				break;
 
@@ -61,23 +64,22 @@ void Application::InitVariables(void)
 
 				//Wall
 			case 2:
-				
-				m_pEntityMngr->AddEntity("openGLolf\\wall.obj", "Wall" + std::to_string(wallCount));
-				m_pEntityMngr->UsePhysicsSolver(false, "Wall" + std::to_string(wallCount));
-				wallPosition = vector3(temp.z, -0.5f, -temp.x);
-
-				 m_pEntityMngr->SetPosition(wallPosition, "Wall" + std::to_string(wallCount));
+				wallName = "Wall" + std::to_string(wallCount);
+				m_pEntityMngr->AddEntity("openGLolf\\wall.obj", wallName);
+				m_pEntityMngr->UsePhysicsSolver(false, wallName);
+				wallPosition = vector3(temp.x, -1.0f, -temp.z);
+				 m_pEntityMngr->SetPosition(wallPosition, wallName);
 				wallCount++; 
+				walls.push_back(temp);
 				break;
 
 				//Obstacle
 			case 3:
-				m_pEntityMngr->AddEntity("openGLolf\\Pollard.obj", "Crate" + std::to_string(obCount));
-				m_pEntityMngr->UsePhysicsSolver(false, "Crate" + std::to_string(obCount));
+				crateName = "Crate" + std::to_string(obCount);
+				m_pEntityMngr->AddEntity("openGLolf\\Pollard.obj", crateName);
+				m_pEntityMngr->UsePhysicsSolver(false, crateName);
 				cratePosition = vector3(temp.x, -.6f, -temp.z);
-				
-
-				m_pEntityMngr->SetPosition(cratePosition, "Crate" + std::to_string(obCount));
+				m_pEntityMngr->SetPosition(cratePosition, crateName);
 				obCount++;				
 				break;
 
@@ -85,7 +87,7 @@ void Application::InitVariables(void)
 			case 4:
 				m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
 				m_pEntityMngr->UsePhysicsSolver(true, "Ball");
-				ballPosition = vector3(temp.x, .0f, -temp.z);
+				ballPosition = vector3(temp.x, 0.0f, -temp.z);
 				m_pEntityMngr->SetPosition(ballPosition, "Ball");
 
 				//Make Arrow
@@ -187,25 +189,32 @@ void Application::Update(void)
 	//Set model matrix of planes
 	for (int i = 0; i < planeCount; i++)
 	{
-		matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition("Plane" + std::to_string(i)))*glm::scale(vector3(2.17f, 1.0f, 2.17f));
+		std::string planeName = "Plane" + std::to_string(i);
 
-		m_pEntityMngr->GetModel("Plane" + std::to_string(i))->SetModelMatrix(mPlane);
-		m_pEntityMngr->GetRigidBody("Plane" + std::to_string(i))->SetModelMatrix(mPlane);
-
+		matrix4 mPlane = glm::translate(m_pEntityMngr->GetPosition(planeName))*glm::scale(vector3(2.17f, 1.0f, 2.17f));
+		m_pEntityMngr->GetModel(planeName)->SetModelMatrix(mPlane);
+		m_pEntityMngr->GetRigidBody(planeName)->SetModelMatrix(mPlane);
 	}
 
 	for (int i = 0; i < obCount; i++)
 	{
-		matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition("Crate" + std::to_string(i)));
-		m_pEntityMngr->GetModel("Crate" + std::to_string(i))->SetModelMatrix(mCrate);
-		m_pEntityMngr->GetRigidBody("Crate" + std::to_string(i))->SetModelMatrix(mCrate);
+		std::string crateName = "Crate" + std::to_string(i);
+
+		matrix4 mCrate = glm::translate(m_pEntityMngr->GetPosition(crateName));
+		m_pEntityMngr->GetModel(crateName)->SetModelMatrix(mCrate);
+		m_pEntityMngr->GetRigidBody(crateName)->SetModelMatrix(mCrate);
 	}
 	
 	for (int i = 0; i < wallCount; i++)
 	{
-		matrix4 mWall = glm::translate(m_pEntityMngr->GetPosition("Wall" + std::to_string(i))) * glm::scale(vector3(.1f, .1f, .1f));
-		m_pEntityMngr->GetModel("Wall" + std::to_string(i))->SetModelMatrix(mWall);
-		m_pEntityMngr->GetRigidBody("Wall" + std::to_string(i))->SetModelMatrix(mWall);
+		std::string wallName = "Wall" + std::to_string(i);
+		CourseBuilder::CourseControl temp = walls[i];
+
+		matrix4 mWall = glm::translate(m_pEntityMngr->GetPosition(wallName)) 
+			* glm::rotate((temp.bRot90 ? 0.0f : 90.0f), AXIS_Y)
+			* glm::scale(vector3(.2f, 1.0f, .275f));
+		m_pEntityMngr->GetModel(wallName)->SetModelMatrix(mWall);
+		m_pEntityMngr->GetRigidBody(wallName)->SetModelMatrix(mWall);
 	}
 	
 	//Update Entity Manager

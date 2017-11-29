@@ -96,36 +96,44 @@ void CourseBuilder::BuildMap()
 				Check for this first, as it will skip checking an invalid index if it already knows to build the wall.
 				*/
 			case 1:
+
+				//Left wall
 				if (i - 1 < 0 || m_naMapData[i - 1][j] == -1) 
 				{
 					temp.type = 2;
-					temp.z = (j * fDisplace) + fDisplaceHalf; //Center of plane minus width of plane, hopefully
-					temp.x = i * fDisplace; //Centered with the plane center for that row.
-					temp.bRot90 = false; //is left right
+					temp.x = (i * fDisplace) - fDisplaceHalf; //Center of the plane plus the width of the plane, backed into the scene
+					temp.z = j * fDisplace; //Centered with the plane center for that column.
+					temp.bRot90 = true; //is left right
 					m_oaCourse.push_back(temp);
 				}
-				if (i + 1 > 9 || m_naMapData[i + 1][j] == -1) 
+
+				//Right wall
+				else if (i + 1 > 9 || m_naMapData[i + 1][j] == -1) 
 				{
 					temp.type = 2;
-					temp.z = (j * fDisplace) - fDisplaceHalf; //Center of plane plus width of plane, hopefully
-					temp.x = i * fDisplace; //Centered with the plane center for that row.
-					temp.bRot90 = false; //is left right
+					temp.x = (i * fDisplace) + fDisplaceHalf; //Center of the plane plus the width of the plane, backed into the scene
+					temp.z = j * fDisplace; //Centered with the plane center for that column.
+					temp.bRot90 = true; //is left right
 					m_oaCourse.push_back(temp);
 				}
+
+				//Front
 				if (j - 1 < 0 || m_naMapData[i][j - 1] == -1) 
 				{
 					temp.type = 2;
-					temp.z = j * fDisplace; //Centered with the plane center for that column.
-					temp.x = (i * fDisplace) - fDisplaceHalf; //Center of the plane plus the width of the plane, backed into the scene
-					temp.bRot90 = true; //is top bottom
+					temp.x = i * fDisplace; //Center of the plane
+					temp.z = (j * fDisplace) - fDisplaceHalf; //Center of the plane minus half the width
+					temp.bRot90 = false; //is top bottom
 					m_oaCourse.push_back(temp);
 				}
-				if (j + 1 > 9 || m_naMapData[i][j + 1] == -1) 
+
+				//Back
+				else if (j + 1 > 9 || m_naMapData[i][j + 1] == -1) 
 				{
 					temp.type = 2;
-					temp.z = j * fDisplace; //Centered with the plane center for that column.
-					temp.x = (i * fDisplace) + fDisplaceHalf; //Center of the plane plus the width of the plane, towards the screen
-					temp.bRot90 = true; //is top bottom
+					temp.x = i * fDisplace; //Center of the plane
+					temp.z = (j * fDisplace) + fDisplaceHalf; //Center of the plane plus half the width
+					temp.bRot90 = false; //is top bottom
 					m_oaCourse.push_back(temp);
 				}
 
