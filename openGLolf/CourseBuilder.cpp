@@ -31,23 +31,19 @@ bool CourseBuilder::ReadMap(std::string a_sLoc)
 			std::vector<char> cstr(asLines[i].c_str(), asLines[i].c_str() + asLines[i].size() + 1);
 			int k = 0;
 			std::string input;
+			std::vector<int> temp;
 			for (int j = 0; j < cstr.size(); j++)
 			{
 				//std::cout << cstr[j] << " || k is: " << k << std::endl;
-				if (cstr[j] == ',' || j == cstr.size() -1) { m_naMapData[i][k] = std::stoi(input); k++; input = ""; }
+				if (cstr[j] == ',' || j == cstr.size() -1) {temp.push_back( std::stoi(input)); k++; input = ""; }
 				else input += cstr[j];
 			} //end for j
+
+			m_naMapData.push_back(temp); 
+			temp.clear();
 		} //end for i
 
-		//DEBUG CHECK, REMOVE AFTER USE
-		for (int i = 0; i < 10; i++)
-		{
-			for (int j = 0; j < 10; j++)
-			{
-				std::cout << m_naMapData[i][j];
-			}
-			std::cout << std::endl;
-		} // end for i
+		
 		return true;
 	} //end if
 	else std::cout << "Cannot open file";
@@ -57,9 +53,9 @@ bool CourseBuilder::ReadMap(std::string a_sLoc)
 void CourseBuilder::BuildMap()
 {
 	
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < m_naMapData.size(); i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < m_naMapData[i].size(); j++)
 		{
 			CourseControl temp;
 
@@ -157,6 +153,49 @@ void CourseBuilder::BuildMap()
 
 				m_oaCourse.push_back(temp);
 				break;
+
+				//Sliding Obstacle
+			case 5:
+				temp.type = 5;
+				temp.x = i * fDisplace;
+				temp.z = j * fDisplace;
+				temp.bRot90 = false;
+				temp.bLerp = true;
+
+				m_oaCourse.push_back(temp);
+				break;
+
+				//Rotating Bridge
+			case 6:
+				temp.type = 6;
+				temp.x = i * fDisplace;
+				temp.z = j * fDisplace;
+				temp.bRot90 = false;
+				temp.bLerp = true;
+
+				m_oaCourse.push_back(temp);
+				break;
+
+				//Portal
+			case 7:
+				temp.type = 7;
+				temp.x = i * fDisplace;
+				temp.z = j * fDisplace;
+				temp.bRot90 = false;
+
+				m_oaCourse.push_back(temp);
+				break;
+
+				//Water hazard
+			case 8: 
+				temp.type = 8;
+				temp.x = i * fDisplace;
+				temp.z = j * fDisplace;
+				temp.bRot90 = false;
+
+				m_oaCourse.push_back(temp);
+				break;
+
 				
 			}
 		}

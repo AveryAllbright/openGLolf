@@ -72,6 +72,7 @@ void Application::ReleaseControllers(void)
 	}
 	m_uControllerCount = 0;
 }
+
 void Application::Run(void)
 {
 	//Initialize the system with default values it was not done in the Main.cpp

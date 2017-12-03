@@ -86,11 +86,18 @@ private:
 
 	//Port the course data to here
 	std::vector<CourseBuilder::CourseControl> m_oaCourseData;
-	int planeCount = 0;
-	int obCount = 0;
-	int wallCount = 0;
-	int ballId = 0;
-	std::vector<CourseBuilder::CourseControl> walls;
+	int m_nPlaneCount = 0;
+	int m_nObstCount = 0;
+	int m_nWallCount = 0;
+	int m_nWaterCount = 0;
+	int m_nSlideCount = 0;
+	int m_nBridgeCount = 0;
+	int m_nPortalCount = 0;
+
+	int m_nBallId = 0;
+	std::vector<CourseBuilder::CourseControl> m_oaWalls;
+	int m_nCourseNumber = 0;
+
 
 public:
 #pragma region Constructor / Run / Destructor
@@ -202,6 +209,13 @@ private:
 	OUTPUT: ---
 	*/
 	void ReleaseControllers(void);
+	
+	/*
+	USAGE: builds the current course
+	ARGUMENTS: a_nCourseNumber -> which map file to read
+	OUTPUT: ---
+	*/
+	void BuildCourse(int a_nCourseNumber);
 #pragma endregion
 
 #pragma region Application Controls

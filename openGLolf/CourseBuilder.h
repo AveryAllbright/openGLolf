@@ -19,9 +19,13 @@ public:
 
 		//used exclusively for the walls, to determine if the wall must be rotated 90 degrees
 		bool bRot90;
+
+		//Setting up certain obstacles to move between two points
+		//These will use Lerp movement to move back and forth
+		bool bLerp;
 	};
 
-	int m_naMapData[10][10];
+	std::vector<std::vector<int>> m_naMapData;
 	std::vector<CourseControl> m_oaCourse; 
 	float fDisplace = 10.f;
 	float fDisplaceHalf = 5.0f;
