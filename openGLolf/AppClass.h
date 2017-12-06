@@ -11,6 +11,7 @@ Date: 2017/06
 #include "imgui\ImGuiObject.h"
 
 #include "MyEntityManager.h"
+#include "MyOctant.h"
 #include "CourseBuilder.h"
 #include <time.h>
 
@@ -22,7 +23,13 @@ class Application
 	MyEntityManager* m_pEntityMngr = nullptr; //Entity Manager
 	
 private:
-	String m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu"; //programmer
+
+
+	uint m_uOctantID = -1; //Index of Octant to display
+	uint m_uObjects = 0; //Number of objects in the scene
+	uint m_uOctantLevels = 0; //Number of levels in the octree
+
+	String m_sProgrammer = "Par For The Course"; //programmer
 
 	static ImGuiObject gui; //GUI object
 	bool m_bGUI_Main = true; //show Main GUI window?
@@ -76,6 +83,7 @@ private:
 	vector3 hitDirection = vector3(0.0f, 0.0f, 1.0f);
 
 	int m_iShotsTaken = 0;
+	MyOctant* m_pRoot = nullptr;
 
 	enum LevelState
 	{
@@ -93,6 +101,13 @@ private:
 	int m_nSlideCount = 0;
 	int m_nBridgeCount = 0;
 	int m_nPortalCount = 0;
+	int m_nBallCount = 0;
+	int m_nHoleCount = 0;
+	int m_nArrowCount = 0;
+
+	std::string ballName;
+	std::string holeName;
+	std::string arrowName;
 
 	int m_nBallId = 0;
 	std::vector<CourseBuilder::CourseControl> m_oaWalls;

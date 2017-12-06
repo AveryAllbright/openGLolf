@@ -3,9 +3,7 @@ using namespace Simplex;
 void Application::InitVariables(void)
 {
 
-	/*
-	**	For GUI
-	*/
+	
 
 	m_sProgrammer = "Par for the Course";
 
@@ -15,6 +13,11 @@ void Application::InitVariables(void)
 
 	//generate our clock
 	m_uClock= m_pSystem->GenClock();
+
+	m_uOctantLevels = 1;
+
+	m_pRoot = new MyOctant(m_uOctantLevels, 5);
+
 }
 void Application::Update(void)
 {
@@ -36,31 +39,22 @@ void Application::Update(void)
 
 	//Set model matrix of ball
 
-	vector3 ballPosition = m_pEntityMngr->GetPosition("Ball");
+	vector3 ballPosition = m_pEntityMngr->GetPosition(ballName);
 	
-	float ballWidth = m_pEntityMngr->GetRigidBody("Ball")->GetHalfWidth().x * 2.0f;
+	float ballWidth = m_pEntityMngr->GetRigidBody(ballName)->GetHalfWidth().x * 2.0f;
 	if (ballPosition.y <= m_pEntityMngr->GetRigidBody()->GetHalfWidth().y) {
 		ballPosition.y = m_pEntityMngr->GetRigidBody()->GetHalfWidth().y+0.4;
 	}
 
-	/*spinny boi
 	
-	vector3 displace = ballPosition - prevPos;
-
-	float distance = displace.length();
-
-	float circ = ballWidth * 2.f * PI;
-	float rotBy = (distance / circ) * 360.f;
-	*/
-
 	matrix4 mBall = glm::translate(ballPosition);
-	m_pEntityMngr->GetModel("Ball")->SetModelMatrix(mBall);
-	m_pEntityMngr->GetRigidBody("Ball")->SetModelMatrix(mBall * glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y)); // *glm::rotate(rotBy, AXIS_Z));
+	m_pEntityMngr->GetModel(ballName)->SetModelMatrix(mBall);
+	m_pEntityMngr->GetRigidBody(ballName)->SetModelMatrix(mBall * glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y)); // *glm::rotate(rotBy, AXIS_Z));
 
 	//Set model matrix of arrow
-	m_pEntityMngr->SetPosition(ballPosition - hitDirection, "Arrow");
-	m_pEntityMngr->SetPosition(ballPosition, "Arrow");
-	vector3 arrowPosition = m_pEntityMngr->GetPosition("Arrow");
+	m_pEntityMngr->SetPosition(ballPosition - hitDirection, arrowName);
+	m_pEntityMngr->SetPosition(ballPosition, arrowName);
+	vector3 arrowPosition = m_pEntityMngr->GetPosition(arrowName);
 	vector3 arrowScale = vector3(0.5f, 0.2f, m_fHitPower*0.75);
 	if (m_fHitPowerOffset == 0.0f) {
 		arrowScale = ZERO_V3;
@@ -68,17 +62,17 @@ void Application::Update(void)
 	matrix4 mArrow = glm::translate(arrowPosition - (hitDirection * m_fHitPower)+ vector3(0.0f,1.0f,0.0f))
 		* glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y)
 		* glm::scale(arrowScale);
-	m_pEntityMngr->GetModel("Arrow")->SetModelMatrix(mArrow);
-	m_pEntityMngr->GetRigidBody("Arrow")->SetModelMatrix(mArrow);
+	m_pEntityMngr->GetModel(arrowName)->SetModelMatrix(mArrow);
+	m_pEntityMngr->GetRigidBody(arrowName)->SetModelMatrix(mArrow);
 
 	//Set model matrix of hole
 	
-	vector3 holePosition = m_pEntityMngr->GetPosition("Hole");
+	vector3 holePosition = m_pEntityMngr->GetPosition(holeName);
 	std::cout << holePosition.x << "," << holePosition.y << "," << holePosition.z << "\n";
 	matrix4 mHole = glm::translate(holePosition)
 		 *glm::scale(.2f, 0.05f, .2f);
-	m_pEntityMngr->GetModel("Hole")->SetModelMatrix(mHole);
-	m_pEntityMngr->GetRigidBody("Hole")->SetModelMatrix(mHole);
+	m_pEntityMngr->GetModel(holeName)->SetModelMatrix(mHole);
+	m_pEntityMngr->GetRigidBody(holeName)->SetModelMatrix(mHole);
 
 	
 
@@ -132,17 +126,19 @@ void Application::Update(void)
 	}
 	
 	//Update Entity Manager
-	m_pEntityMngr->Update();
+	m_pEntityMngr->Update(ballName, holeName);
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
 
-	//prevPos = ballPosition;
+	
 }
 void Application::Display(void)
 {
 	// Clear the screen
 	ClearScreen();
+
+	m_pRoot->DisplayLeafs();
 
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
@@ -176,11 +172,14 @@ std::string Application::PrintVector3(vector3 v) {
 void Application::BuildCourse(int a_nCourseNumber)
 {
 
-	for (uint i = 0; i < m_pEntityMngr->GetEntityCount(); i++)
+	int temp = m_pEntityMngr->GetEntityCount();
+
+	for (uint i = 0; i < temp; i++)
 	{
 		m_pEntityMngr->RemoveEntity(i);
-	}
+	}	
 
+	/*
 	m_nBridgeCount = 0;
 	m_nPortalCount = 0;
 	m_nWallCount = 0;
@@ -188,7 +187,7 @@ void Application::BuildCourse(int a_nCourseNumber)
 	m_nWaterCount = 0;
 	m_nSlideCount = 0;
 	m_nObstCount = 0;
-	
+	*/
 	//InitMap
 	CourseBuilder TestBuilder;
 	std::string loc = "Data\\Courses\\map" + std::to_string(a_nCourseNumber) + ".txt"; //Load First Map
@@ -218,6 +217,7 @@ void Application::BuildCourse(int a_nCourseNumber)
 		std::string portalName;
 		std::string slideName;
 		std::string bridgeName;
+		//std::string ballName;
 #pragma endregion
 
 		//iterate through the course data and spawn the course
@@ -239,10 +239,11 @@ void Application::BuildCourse(int a_nCourseNumber)
 				//Hole
 			case 1:
 
-				m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", "Hole");
-				m_pEntityMngr->UsePhysicsSolver(false, "Hole");
+				holeName = "Hole" + std::to_string(m_nHoleCount);
+				m_pEntityMngr->AddEntity("openGLolf\\Cup.obj", holeName);
+				m_pEntityMngr->UsePhysicsSolver(false, holeName);
 				holePosition = vector3(temp.x, .0f, -temp.z);
-				m_pEntityMngr->SetPosition(holePosition, "Hole");
+				m_pEntityMngr->SetPosition(holePosition, holeName);
 
 				break;
 
@@ -269,16 +270,18 @@ void Application::BuildCourse(int a_nCourseNumber)
 
 				//Spawn Ball
 			case 4:
-				m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", "Ball");
-				m_pEntityMngr->UsePhysicsSolver(true, "Ball");
+				ballName = "Ball" + std::to_string(m_nBallCount);
+				m_pEntityMngr->AddEntity("openGLolf\\GolfBall.obj", ballName);
+				m_pEntityMngr->UsePhysicsSolver(true, ballName);
 				ballPosition = vector3(temp.x, 0.0f, -temp.z);
-				m_pEntityMngr->SetPosition(ballPosition, "Ball");
+				m_pEntityMngr->SetPosition(ballPosition, ballName);
 
 				//Make Arrow
-				m_pEntityMngr->AddEntity("openGLolf\\arrow.obj", "Arrow");
-				m_pEntityMngr->UsePhysicsSolver(false, "Arrow");
+				arrowName = "Arrow" + std::to_string(m_nArrowCount);
+				m_pEntityMngr->AddEntity("openGLolf\\arrow.obj", arrowName);
+				m_pEntityMngr->UsePhysicsSolver(false, arrowName);
 				arrowPosition = ballPosition;
-				m_pEntityMngr->SetPosition(arrowPosition, "Arrow");
+				m_pEntityMngr->SetPosition(arrowPosition, arrowName);
 
 				//Set the position and target of the camera
 				m_pCameraMngr->SetPositionTargetAndUp(
@@ -286,7 +289,7 @@ void Application::BuildCourse(int a_nCourseNumber)
 					ballPosition,	//Target
 					AXIS_Y);		//Up
 
-				m_nBallId = m_pEntityMngr->GetEntityIndex("Ball");
+				m_nBallId = m_pEntityMngr->GetEntityIndex(ballName);
 				break;
 
 				//Slide
@@ -331,6 +334,11 @@ void Application::BuildCourse(int a_nCourseNumber)
 				break;
 
 			} //end switch
+
+			if (m_nWallCount == 37)
+			{
+				int ajewfioioj = 0;
+			}
 		} //end for
 	} //end if loaded
 

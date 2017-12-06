@@ -114,19 +114,24 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 	case sf::Keyboard::Space:
 		//apply force to the ball
 		m_pEntityMngr->GetEntity(m_nBallId)->GetMySolver()->SetVelocity(hitDirection * -m_fHitPower);
-		//prevPos = m_pEntityMngr->GetPosition("Ball");
 		//reset the hit power to zero for next swing
 		m_fHitPowerOffset = 0;
 		break;
 
 	case sf::Keyboard::PageUp:
 		m_nCourseNumber++;
+		m_nBallCount = m_nCourseNumber;
+		m_nArrowCount = m_nCourseNumber;
+		m_nHoleCount = m_nCourseNumber;
 		if (m_nCourseNumber == 10) { m_nCourseNumber = 1; }
 		BuildCourse(m_nCourseNumber);
 		break;
 
 	case sf::Keyboard::PageDown:
 		m_nCourseNumber--;
+		m_nBallCount = m_nCourseNumber;
+		m_nArrowCount = m_nCourseNumber;
+		m_nHoleCount = m_nCourseNumber;
 		if (m_nCourseNumber == -1) { m_nCourseNumber = 9; }
 		BuildCourse(m_nCourseNumber);
 		break;

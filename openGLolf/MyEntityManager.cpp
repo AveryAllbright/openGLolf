@@ -256,17 +256,16 @@ Simplex::MyEntityManager::MyEntityManager(MyEntityManager const& a_pOther) { }
 Simplex::MyEntityManager& Simplex::MyEntityManager::operator=(MyEntityManager const& a_pOther) { return *this; }
 Simplex::MyEntityManager::~MyEntityManager() { Release(); };
 // other methods
-void Simplex::MyEntityManager::Update(void)
+void Simplex::MyEntityManager::Update(std::string ballName, std::string holeName)
 {
-	ballId = GetEntityIndex("Ball");
+	ballId = GetEntityIndex(ballName);
 	for (int i = 0; i < m_uEntityCount; i++) {
 		if (m_mEntityArray[ballId]->IsColliding(m_mEntityArray[i]) && i != ballId) {
-			if (m_mEntityArray[i]->GetUniqueID() == "Hole") {
+			if (m_mEntityArray[i]->GetUniqueID() == holeName) {
 				std::cout << "IN HOLE" << std::endl;
 				m_bInHole = true;
 				m_mEntityArray[ballId]->GetMySolver()->SetPlay(false);
-			}else if (m_mEntityArray[i]->GetUniqueID() == "Plane" || m_mEntityArray[i]->GetUniqueID() == "Arrow") {
-				//EMPTY
+			
 			}
 			else {
 				m_mEntityArray[ballId]->GetMySolver()->ResolveCollision(m_mEntityArray[i]->GetMySolver());
