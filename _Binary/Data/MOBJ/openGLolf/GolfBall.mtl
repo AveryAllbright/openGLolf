@@ -1,13 +1,8 @@
-newmtl initialShadingGroup
-illum 4
-Kd 0.50 0.50 0.50
-Ka 0.00 0.00 0.00
-Tf 1.00 1.00 1.00
-Ni 1.00
-newmtl lambert4SG
+newmtl blinn1SG
 illum 4
 Kd 0.00 0.00 0.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-map_Kd depositphotos_84224562-stock-illustration-golf-ball-pattern.jpg
+map_Kd depositphotos_54469597-stock-photo-golf-ball-wallpaper-background-texture.jpg
 Ni 1.00
+Ks 0.50 0.50 0.50

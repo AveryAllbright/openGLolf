@@ -28,6 +28,8 @@ private:
 	uint m_uOctantID = -1; //Index of Octant to display
 	uint m_uObjects = 0; //Number of objects in the scene
 	uint m_uOctantLevels = 0; //Number of levels in the octree
+	int m_nCurrentBallOct = -1;
+	int m_nPreviousBallOct;
 
 	String m_sProgrammer = "Par For The Course"; //programmer
 
@@ -63,8 +65,8 @@ private:
 	uint m_uActCont = 0; //Active Controller of the Application
 
 	float m_fHitPower = 0.0f; //the strength of the power for the players hit
-	float m_fHitPowerMaxHalf = 2.0f; // 1/2 the maximum strength of we can hit the ball with
-	float m_fHitPowerMax = 4.0f; // the maximum strength of we can hit the ball with
+	float m_fHitPowerMaxHalf = 1.5f; // 1/2 the maximum strength of we can hit the ball with
+	float m_fHitPowerMax = 3.0f; // the maximum strength of we can hit the ball with
 	float m_fHitPowerOffset = 0.0f;
 	float m_fDeltaTime; //getting delta time eat frame
 	uint m_uClock; 
@@ -231,6 +233,8 @@ private:
 	OUTPUT: ---
 	*/
 	void BuildCourse(int a_nCourseNumber);
+
+	void CheckCollisions(void);
 #pragma endregion
 
 #pragma region Application Controls
