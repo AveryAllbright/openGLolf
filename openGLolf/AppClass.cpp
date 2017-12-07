@@ -1,9 +1,7 @@
 #include "AppClass.h"
 using namespace Simplex;
 void Application::InitVariables(void)
-{
-
-	
+{	
 
 	m_sProgrammer = "Par for the Course";
 
@@ -14,7 +12,7 @@ void Application::InitVariables(void)
 	//generate our clock
 	m_uClock= m_pSystem->GenClock();
 
-	m_uOctantLevels = 1;
+	m_uOctantLevels = 4;
 
 	m_pRoot = new MyOctant(m_uOctantLevels, 5);
 
@@ -51,6 +49,7 @@ void Application::Update(void)
 	m_pEntityMngr->GetModel(ballName)->SetModelMatrix(mBall);
 	m_pEntityMngr->GetRigidBody(ballName)->SetModelMatrix(mBall * glm::rotate(180.0f + glm::degrees(cameraRadian), AXIS_Y)); // *glm::rotate(rotBy, AXIS_Z));
 
+	
 	//Set model matrix of arrow
 	m_pEntityMngr->SetPosition(ballPosition - hitDirection, arrowName);
 	m_pEntityMngr->SetPosition(ballPosition, arrowName);
@@ -78,6 +77,7 @@ void Application::Update(void)
 
 	//Set the position and target of the camera
 	//if we are playing the target is the ball
+	static float count = 0.0f;
 	if (m_lsLevelState == Play) {
 
 		m_pCameraMngr->SetPositionTargetAndUp(
@@ -85,11 +85,28 @@ void Application::Update(void)
 			ballPosition,	//Target
 			AXIS_Y);		//Up
 	}else {
-		
+		count += m_fDeltaTime;
+
 		m_pCameraMngr->SetPositionTargetAndUp(
 			holePosition + cameraOffset, //Position
 			holePosition,	//Target
 			AXIS_Y);		//Up 
+
+		if (count > 3.0f) {
+			m_nCourseNumber++;
+			m_nBallCount = m_nCourseNumber;
+			m_nArrowCount = m_nCourseNumber;
+			m_nHoleCount = m_nCourseNumber;
+			if (m_nCourseNumber == 7) { m_nCourseNumber = 1; }
+			m_pEntityMngr->GetEntity(0)->GetMySolver()->SetPlay(true);
+			BuildCourse(m_nCourseNumber);
+
+			count = 0;
+			m_lsLevelState = Play;
+			m_iShotsTaken = 0;
+
+			return;
+		}
 	}
 	
 
@@ -120,13 +137,22 @@ void Application::Update(void)
 
 		matrix4 mWall = glm::translate(m_pEntityMngr->GetPosition(wallName)) 
 			* glm::rotate((temp.bRot90 ? 0.0f : 90.0f), AXIS_Y)
-			* glm::scale(vector3(.2f, 1.0f, .275f));
+			* glm::scale(vector3(5.f, 1.0f, .28f));
 		m_pEntityMngr->GetModel(wallName)->SetModelMatrix(mWall);
 		m_pEntityMngr->GetRigidBody(wallName)->SetModelMatrix(mWall);
 	}
 	
 	//Update Entity Manager
-	m_pEntityMngr->Update(ballName, holeName);
+	m_pEntityMngr->Update(ballName, holeName, arrowName);
+
+	m_nCurrentBallOct = m_pRoot->FindBall(m_nBallId);
+
+	if (m_nCurrentBallOct != m_nPreviousBallOct)
+	{
+		m_nPreviousBallOct = m_nCurrentBallOct;
+		m_pRoot = new MyOctant(m_uOctantLevels, 5);
+	}
+	
 
 	//Add objects to render list
 	m_pEntityMngr->AddEntityToRenderList(-1, true);
@@ -172,12 +198,16 @@ std::string Application::PrintVector3(vector3 v) {
 void Application::BuildCourse(int a_nCourseNumber)
 {
 
+	while (m_pEntityMngr->GetEntityCount() != 0) m_pEntityMngr->RemoveEntity(0);
+
+	/*
 	int temp = m_pEntityMngr->GetEntityCount();
 
 	for (uint i = 0; i < temp; i++)
 	{
 		m_pEntityMngr->RemoveEntity(i);
 	}	
+	*/
 
 	/*
 	m_nBridgeCount = 0;
@@ -335,11 +365,12 @@ void Application::BuildCourse(int a_nCourseNumber)
 
 			} //end switch
 
-			if (m_nWallCount == 37)
-			{
-				int ajewfioioj = 0;
-			}
 		} //end for
+
+		m_pRoot = new MyOctant(m_uOctantLevels, 5);
+		m_nCurrentBallOct = m_pRoot->FindBall(m_nBallId);
+		m_nPreviousBallOct = m_nCurrentBallOct;
+
 	} //end if loaded
 
 }

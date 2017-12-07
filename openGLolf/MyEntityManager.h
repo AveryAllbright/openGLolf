@@ -2,8 +2,7 @@
 Programmer: Alberto Bobadilla (labigm@gmail.com)
 Date: 2017/07
 ----------------------------------------------*/
-#ifndef __MYENTITYMANAGER_H_
-#define __MyENTITYMANAGER_H_
+#pragma once
 
 #include "MyEntity.h"
 
@@ -75,7 +74,7 @@ public:
 	ARGUMENTS: ---
 	OUTPUT: ---
 	*/
-	void Update(std::string ballName, std::string holeName);
+	void Update(std::string ballName, std::string holeName, std::string arrowName);
 	/*
 	USAGE: Gets the model associated with this entity
 	ARGUMENTS: uint a_uIndex = -1 -> index in the list of entities; if less than 0 it will add it to the last in the list
@@ -359,7 +358,7 @@ private:
 
 } //namespace Simplex
 
-#endif //__MYENTITYMANAGER_H_
+
 
 /*
 USAGE:

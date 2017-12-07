@@ -6,7 +6,7 @@ Date: 2017/06
 #ifndef _MY_OCTREE_H
 #define _MY_OCTREE_H
 
-#include "Simplex\Physics\EntityManager.h";
+#include "MyEntityManager.h";
 
 namespace Simplex
 {
@@ -27,13 +27,15 @@ namespace Simplex
 		vector3 m_v3Width;
 
 		MeshManager* m_pMeshMngr;
-		EntityManager* m_pEntityMngr;
+		MyEntityManager* m_pEntityMngr;
 
 		std::vector<uint> m_auObjectsInNode;
 
 		uint m_uID = 0;
 		uint m_uDepth = 0;
 		uint m_uChildCount = 0;
+
+		uint ballOctID = 0;
 
 	public:
 
@@ -96,6 +98,8 @@ namespace Simplex
 		void SetCurrentOctantID(uint a_uID);
 
 		uint Simplex::MyOctant::GetCurrentOctantID(void);
+
+		int FindBall(int index);
 
 	private:
 

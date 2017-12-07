@@ -14,7 +14,7 @@ uint MyOctant::m_uCurrentID;
 
 MyOctant::MyOctant(uint a_uMaxDepth, uint a_uIdealCount)
 {
-	m_pEntityMngr = EntityManager::GetInstance();
+	m_pEntityMngr = MyEntityManager::GetInstance();
 	m_pMeshMngr = MeshManager::GetInstance();
 
 	m_uMaxDepth = a_uMaxDepth;
@@ -26,7 +26,7 @@ MyOctant::MyOctant(uint a_uMaxDepth, uint a_uIdealCount)
 
 MyOctant::MyOctant(vector3 a_v3Center, float a_v3Width)
 {
-	m_pEntityMngr = EntityManager::GetInstance();
+	m_pEntityMngr = MyEntityManager::GetInstance();
 	m_pMeshMngr = MeshManager::GetInstance();
 
 	m_uID = m_uNodeCount;
@@ -41,7 +41,7 @@ MyOctant::MyOctant(vector3 a_v3Center, float a_v3Width)
 
 MyOctant::MyOctant(vector3 a_v3Max, vector3 a_v3Min, float a_v3Width)
 {
-	m_pEntityMngr = EntityManager::GetInstance();
+	m_pEntityMngr = MyEntityManager::GetInstance();
 	m_pMeshMngr = MeshManager::GetInstance();
 
 	m_uID = m_uNodeCount;
@@ -102,7 +102,9 @@ uint Simplex::MyOctant::GetOctantCount(void)
 
 bool Simplex::MyOctant::IsWithinOctant(uint a_uIndex)
 {
-	vector3 Pos = m_pEntityMngr->GetEntity(a_uIndex)->GetPosition();
+	std::string temp = m_pEntityMngr->GetUniqueID(a_uIndex);
+	
+	vector3 Pos = m_pEntityMngr->GetPosition(temp);
 
 	if (Pos.x >= m_v3Min.x && Pos.x <= m_v3Max.x)
 	{
@@ -114,7 +116,6 @@ bool Simplex::MyOctant::IsWithinOctant(uint a_uIndex)
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -276,6 +277,27 @@ void Simplex::MyOctant::SetCurrentOctantID(uint a_uID)
 	m_uCurrentID = a_uID;
 }
 
+int Simplex::MyOctant::FindBall(int index)
+{
+	if (IsWithinOctant(index))
+	{
+		ballOctID = m_uID;
+		m_auObjectsInNode.push_back(index);
+	}
+	else
+	{
+		if (m_uChildCount != 0)
+		{
+			for (int i = 0; i < 8; i++)
+			{
+				m_pChildren[i]->FindBall(index);
+			}
+		}
+	}
+
+	return ballOctID;
+}
+
 void Simplex::MyOctant::Release(void)
 {
 	for (int i = 0; i < m_pEntityMngr->GetEntityCount(); i++)
@@ -312,7 +334,7 @@ void Simplex::MyOctant::Init(void)
 	}
 
 
-	RigidBody* referenceRB = new RigidBody(minMaxList);
+	MyRigidBody* referenceRB = new MyRigidBody(minMaxList);
 
 
 	m_v3Max = referenceRB->GetMaxGlobal();

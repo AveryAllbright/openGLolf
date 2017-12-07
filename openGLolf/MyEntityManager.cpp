@@ -256,18 +256,43 @@ Simplex::MyEntityManager::MyEntityManager(MyEntityManager const& a_pOther) { }
 Simplex::MyEntityManager& Simplex::MyEntityManager::operator=(MyEntityManager const& a_pOther) { return *this; }
 Simplex::MyEntityManager::~MyEntityManager() { Release(); };
 // other methods
-void Simplex::MyEntityManager::Update(std::string ballName, std::string holeName)
+void Simplex::MyEntityManager::Update(std::string ballName, std::string holeName, std::string arrowName)
 {
 	ballId = GetEntityIndex(ballName);
 	for (int i = 0; i < m_uEntityCount; i++) {
 		if (m_mEntityArray[ballId]->IsColliding(m_mEntityArray[i]) && i != ballId) {
 			if (m_mEntityArray[i]->GetUniqueID() == holeName) {
+				vector3 velocity = m_mEntityArray[ballId]->GetMySolver()->GetVelocity();
+				if (glm::length(velocity) > 0.1f) break;
 				std::cout << "IN HOLE" << std::endl;
 				m_bInHole = true;
 				m_mEntityArray[ballId]->GetMySolver()->SetPlay(false);
-			
+			}
+			else if (m_mEntityArray[i]->GetUniqueID() == arrowName) {
+				//IGNORE
 			}
 			else {
+				/*vector3 velocity = m_mEntityArray[ballId]->GetMySolver()->GetVelocity();
+				if (velocity != ZERO_V3) {
+					MyRigidBody* rb = m_mEntityArray[ballId]->GetRigidBody();
+					vector3 contact = rb->GetCenterGlobal() + (glm::normalize(velocity) * rb->GetHalfWidth());
+					vector3 difference = glm::normalize(m_mEntityArray[i]->GetRigidBody()->GetCenterGlobal() - contact);
+
+					float angle = glm::acos(glm::dot(difference, velocity));
+					if (angle < 0.0f)
+					{
+						//From sides
+						if (difference.x > difference.z) {
+							m_mEntityArray[ballId]->GetMySolver()->SetVelocity(vector3(-velocity.x, velocity.y, velocity.z));
+						}
+
+						//From top/bottom
+						else {
+							m_mEntityArray[ballId]->GetMySolver()->SetVelocity(vector3(velocity.x, velocity.y, -velocity.z));
+						}
+					}
+				}
+				*/
 				m_mEntityArray[ballId]->GetMySolver()->ResolveCollision(m_mEntityArray[i]->GetMySolver());
 			}
 		}	

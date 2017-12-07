@@ -116,6 +116,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		m_pEntityMngr->GetEntity(m_nBallId)->GetMySolver()->SetVelocity(hitDirection * -m_fHitPower);
 		//reset the hit power to zero for next swing
 		m_fHitPowerOffset = 0;
+		m_iShotsTaken++;
 		break;
 
 	case sf::Keyboard::PageUp:
@@ -125,6 +126,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		m_nHoleCount = m_nCourseNumber;
 		if (m_nCourseNumber == 10) { m_nCourseNumber = 1; }
 		BuildCourse(m_nCourseNumber);
+		m_iShotsTaken = 0;
 		break;
 
 	case sf::Keyboard::PageDown:
@@ -134,6 +136,7 @@ void Application::ProcessKeyReleased(sf::Event a_event)
 		m_nHoleCount = m_nCourseNumber;
 		if (m_nCourseNumber == -1) { m_nCourseNumber = 9; }
 		BuildCourse(m_nCourseNumber);
+		m_iShotsTaken = 0;
 		break;
 	
 	case sf::Keyboard::LShift:
