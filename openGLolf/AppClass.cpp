@@ -41,7 +41,7 @@ void Application::Update(void)
 	
 	float ballWidth = m_pEntityMngr->GetRigidBody(ballName)->GetHalfWidth().x * 2.0f;
 	if (ballPosition.y <= m_pEntityMngr->GetRigidBody()->GetHalfWidth().y) {
-		ballPosition.y = m_pEntityMngr->GetRigidBody()->GetHalfWidth().y+0.4;
+		ballPosition.y = m_pEntityMngr->GetRigidBody()->GetHalfWidth().y+0.2;
 	}
 
 	
@@ -91,22 +91,26 @@ void Application::Update(void)
 			holePosition + cameraOffset, //Position
 			holePosition,	//Target
 			AXIS_Y);		//Up 
+		ballPosition = vector3(0.0f, 0.0f, -2000.0f);
+			
+		m_nCourseNumber++;
+		m_nBallCount++;
+		m_nArrowCount++;
+		m_nHoleCount++;
 
-		if (count > 3.0f) {
-			m_nCourseNumber++;
-			m_nBallCount = m_nCourseNumber;
-			m_nArrowCount = m_nCourseNumber;
-			m_nHoleCount = m_nCourseNumber;
-			if (m_nCourseNumber == 7) { m_nCourseNumber = 1; }
-			m_pEntityMngr->GetEntity(0)->GetMySolver()->SetPlay(true);
-			BuildCourse(m_nCourseNumber);
+		if (m_nCourseNumber == 7) { m_nCourseNumber = 0; m_ShotsTakenLastGame = m_nShotTakenForever; m_nShotTakenForever = 0; }
+			
+		BuildCourse(m_nCourseNumber);
 
-			count = 0;
-			m_lsLevelState = Play;
-			m_iShotsTaken = 0;
-
-			return;
-		}
+			
+		m_lsLevelState = Play;
+		m_nShotsTaken = 0;
+		m_pCameraMngr->SetPositionTargetAndUp(
+				ballPosition + cameraOffset, //Position
+				ballPosition,	//Target
+				AXIS_Y);		//Up
+			
+		
 	}
 	
 

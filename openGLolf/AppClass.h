@@ -84,7 +84,7 @@ private:
 	float cameraRadian = 0.0f;
 	vector3 hitDirection = vector3(0.0f, 0.0f, 1.0f);
 
-	int m_iShotsTaken = 0;
+	int m_nShotsTaken = 0;
 	MyOctant* m_pRoot = nullptr;
 
 	enum LevelState
@@ -106,6 +106,8 @@ private:
 	int m_nBallCount = 0;
 	int m_nHoleCount = 0;
 	int m_nArrowCount = 0;
+	int m_nShotTakenForever = 0;
+	int m_ShotsTakenLastGame = 0;
 
 	std::string ballName;
 	std::string holeName;

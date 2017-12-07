@@ -39,11 +39,15 @@ void Application::DrawGUI(void)
 			ImGui::Text("FrameRate: %.2f [FPS] -> %.3f [ms/frame]\n",
 				ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
 			ImGui::Separator();
-			ImGui::Text("Shots: %d", m_iShotsTaken);
+			ImGui::Text("Hole: %d", m_nCourseNumber);
+			ImGui::Text("Shots: %d", m_nShotsTaken);
+			ImGui::Text("Shots taken this game: %d", m_nShotTakenForever);
+			ImGui::Text("Shots taken last game: %d", m_ShotsTakenLastGame);
 			ImGui::Separator();
 			ImGui::Text("Control:\n");
 			ImGui::Text("   AD: Rotate Camera\n");
 			ImGui::Text("   Space: Shoot ball\n");
+			
 		}
 		ImGui::End();
 	}

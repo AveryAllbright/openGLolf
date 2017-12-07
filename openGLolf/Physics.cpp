@@ -97,7 +97,7 @@ vector3 RoundSmallVelocity(vector3 a_v3Velocity, float minVelocity = 0.01f)
 }
 void MySolver::Update(void)
 {
-	ApplyForce(vector3(0.0f, -0.035f, 0.0f));	//Gravity
+	ApplyForce(vector3(0.0f, -0.005f, 0.0f));	//Gravity
 
 	m_v3Velocity += m_v3Acceleration;
 
@@ -111,13 +111,7 @@ void MySolver::Update(void)
 }
 void MySolver::Move(void) {
 	m_v3Position += m_v3Velocity;
-	if (m_bPlay) {
-		if (m_v3Position.y <= 0)
-		{
-			m_v3Position.y = 0;
-			m_v3Velocity.y = 0;
-		}
-	} 
+	
 	m_v3Acceleration = ZERO_V3;
 }
 void MySolver::ResolveCollision(MySolver* a_pOther)

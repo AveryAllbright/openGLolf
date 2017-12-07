@@ -258,6 +258,7 @@ Simplex::MyEntityManager::~MyEntityManager() { Release(); };
 // other methods
 void Simplex::MyEntityManager::Update(std::string ballName, std::string holeName, std::string arrowName)
 {
+	m_bInHole = false;
 	ballId = GetEntityIndex(ballName);
 	for (int i = 0; i < m_uEntityCount; i++) {
 		if (m_mEntityArray[ballId]->IsColliding(m_mEntityArray[i]) && i != ballId) {
@@ -296,6 +297,7 @@ void Simplex::MyEntityManager::Update(std::string ballName, std::string holeName
 				m_mEntityArray[ballId]->GetMySolver()->ResolveCollision(m_mEntityArray[i]->GetMySolver());
 			}
 		}	
+		
 	}
 
 
